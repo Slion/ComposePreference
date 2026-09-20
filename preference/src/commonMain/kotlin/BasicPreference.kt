@@ -31,6 +31,7 @@ public fun LazyListScope.basicPreference(
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     iconContainer: @Composable () -> Unit = {},
+    actionIconContainer: @Composable () -> Unit = {},
     widgetContainer: @Composable () -> Unit = {},
     onClick: (() -> Unit)? = null,
 ) {
@@ -40,6 +41,7 @@ public fun LazyListScope.basicPreference(
             modifier = modifier,
             enabled = enabled,
             iconContainer = iconContainer,
+            actionIconContainer = actionIconContainer,
             widgetContainer = widgetContainer,
             onClick = onClick,
         )
@@ -52,6 +54,7 @@ public fun BasicPreference(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     iconContainer: @Composable () -> Unit = {},
+    actionIconContainer: @Composable () -> Unit = {},
     widgetContainer: @Composable () -> Unit = {},
     onClick: (() -> Unit)? = null,
 ) {
@@ -68,6 +71,7 @@ public fun BasicPreference(
     ) {
         iconContainer()
         Box(modifier = Modifier.weight(1f)) { textContainer() }
+        actionIconContainer()
         widgetContainer()
     }
 }

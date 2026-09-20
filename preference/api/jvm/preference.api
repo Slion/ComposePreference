@@ -1,7 +1,7 @@
 public final class me/zhanghai/compose/preference/BasicPreferenceKt {
-	public static final fun BasicPreference (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-	public static final fun basicPreference (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)V
-	public static synthetic fun basicPreference$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static final fun BasicPreference (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun basicPreference (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun basicPreference$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
 public final class me/zhanghai/compose/preference/CheckboxPreferenceKt {
@@ -16,10 +16,12 @@ public final class me/zhanghai/compose/preference/CheckboxPreferenceKt {
 public final class me/zhanghai/compose/preference/ComposableSingletons$BasicPreferenceKt {
 	public static final field INSTANCE Lme/zhanghai/compose/preference/ComposableSingletons$BasicPreferenceKt;
 	public fun <init> ()V
-	public final fun getLambda$-1070936785$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$-1694088339$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$1430893402$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
-	public final fun getLambda$1998655096$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-1983164477$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-750879305$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$-984302866$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$1357704642$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$699784601$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda$853845548$ComposePreference_preference ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class me/zhanghai/compose/preference/ComposableSingletons$FooterPreferenceKt {
@@ -164,9 +166,9 @@ public final class me/zhanghai/compose/preference/PreferenceFlow_jvmKt {
 }
 
 public final class me/zhanghai/compose/preference/PreferenceKt {
-	public static final fun Preference (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-	public static final fun preference (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)V
-	public static synthetic fun preference$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static final fun Preference (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun preference (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)V
+	public static synthetic fun preference$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 }
 
 public final class me/zhanghai/compose/preference/PreferenceLocalsKt {

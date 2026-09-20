@@ -37,6 +37,7 @@ public fun LazyListScope.preference(
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
+    actionIcon: @Composable (() -> Unit)? = null,
     summary: @Composable (() -> Unit)? = null,
     widgetContainer: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -47,6 +48,7 @@ public fun LazyListScope.preference(
             modifier = modifier,
             enabled = enabled,
             icon = icon,
+            actionIcon = actionIcon,
             summary = summary,
             widgetContainer = widgetContainer,
             onClick = onClick,
@@ -60,6 +62,7 @@ public fun Preference(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
+    actionIcon: @Composable (() -> Unit)? = null,
     summary: @Composable (() -> Unit)? = null,
     widgetContainer: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
@@ -72,7 +75,7 @@ public fun Preference(
                     Modifier.padding(
                         theme.padding.copy(
                             start = if (icon != null) 0.dp else Dp.Unspecified,
-                            end = if (widgetContainer != null) 0.dp else Dp.Unspecified,
+                            end = if (widgetContainer != null || actionIcon != null) 0.dp else Dp.Unspecified,
                         )
                     )
             ) {
@@ -113,6 +116,25 @@ public fun Preference(
                                 if (enabled) it else it.copy(alpha = theme.disabledOpacity)
                             },
                         content = icon,
+                    )
+                }
+            }
+        },
+        actionIconContainer = {
+            if (actionIcon != null) {
+                val theme = LocalPreferenceTheme.current
+                Box(
+                    modifier =
+                        Modifier.widthIn(min = theme.iconContainerMinWidth)
+                            .padding(theme.padding.copy(start = 0.dp)),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    CompositionLocalProvider(
+                        LocalContentColor provides
+                            theme.iconColor.let {
+                                if (enabled) it else it.copy(alpha = theme.disabledOpacity)
+                            },
+                        content = actionIcon,
                     )
                 }
             }

@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -74,6 +75,9 @@ fun SampleScreen(onPreferenceCardsClick: () -> Unit) {
                 key = "preference_cards",
                 title = { Text(text = "Preference cards") },
                 summary = { Text(text = "Preference cards in a Material Design 3 card") },
+                actionIcon = {
+                    Icon(imageVector = Icons.Filled.ChevronRight, contentDescription = null)
+                },
             ) { onPreferenceCardsClick() }
             preferenceCategory(
                 key = "basic_category",
