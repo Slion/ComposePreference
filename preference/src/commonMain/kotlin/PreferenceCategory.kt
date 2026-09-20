@@ -33,7 +33,10 @@ public fun LazyListScope.preferenceCategory(
     modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
     item(key = key, contentType = "PreferenceCategory") {
-        PreferenceCategory(title = title, modifier = modifier)
+        PreferenceCategory(
+            title = title,
+            modifier = modifier.then(highlightedKeyModifier(key)),
+        )
     }
 }
 

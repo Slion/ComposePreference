@@ -160,7 +160,7 @@ public fun LazyListScope.preferenceCard(
     if (key != null) {
         item(key = key, contentType = "PreferenceCard") {
             PreferenceCard(
-                modifier = modifier,
+                modifier = modifier.then(highlightedKeyModifier(key)),
                 style = style,
                 shape = shape,
                 cardColor = cardColor,

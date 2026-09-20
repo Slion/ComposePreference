@@ -89,6 +89,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":preference"))
+                implementation(libs.androidx.activity.compose)
                 // TODO: Migrate away from deprecated dependency aliases once they have a BOM for
                 //  compatible versions.
                 implementation(compose.components.resources)

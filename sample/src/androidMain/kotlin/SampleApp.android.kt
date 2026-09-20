@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,18 @@
 
 package me.zhanghai.compose.preference.sample
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import me.zhanghai.compose.preference.PreferencePageScreen
+import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
 @Composable
-actual fun SampleBackHandler(enabled: Boolean, onBack: () -> Unit) {
-    if (enabled) {
-        BackHandler(onBack = onBack)
+actual fun SampleApp() {
+    SampleTheme {
+        ProvidePreferenceLocals {
+            PreferencePageScreen(
+                title = SampleTitle,
+                pages = samplePages(),
+            )
+        }
     }
 }

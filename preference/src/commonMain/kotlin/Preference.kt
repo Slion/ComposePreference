@@ -45,7 +45,7 @@ public fun LazyListScope.preference(
     item(key = key, contentType = "Preference") {
         Preference(
             title = title,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled,
             icon = icon,
             actionIcon = actionIcon,

@@ -64,6 +64,96 @@ internal object Icons {
         }
 
     private var _info: ImageVector? = null
+
+    val Search: ImageVector
+        get() {
+            if (_search != null) {
+                return _search!!
+            }
+            _search =
+                materialIcon(name = "Filled.Search") {
+                    materialPath {
+                        // The standard Material "search" glyph (magnifier with a full handle to
+                        // the bottom-right corner).
+                        moveTo(15.5f, 14.0f)
+                        horizontalLineToRelative(-0.79f)
+                        lineToRelative(-0.28f, -0.27f)
+                        curveTo(15.41f, 12.59f, 16.0f, 11.11f, 16.0f, 9.5f)
+                        curveTo(16.0f, 5.91f, 13.09f, 3.0f, 9.5f, 3.0f)
+                        curveTo(5.91f, 3.0f, 3.0f, 5.91f, 3.0f, 9.5f)
+                        curveTo(3.0f, 13.09f, 5.91f, 16.0f, 9.5f, 16.0f)
+                        curveTo(11.11f, 16.0f, 12.59f, 15.41f, 13.73f, 14.43f)
+                        lineToRelative(0.27f, 0.28f)
+                        verticalLineToRelative(0.79f)
+                        lineToRelative(4.99f, 4.99f)
+                        lineTo(20.49f, 19.49f)
+                        lineTo(15.5f, 14.0f)
+                        close()
+                        moveTo(9.5f, 14.0f)
+                        curveTo(7.01f, 14.0f, 5.0f, 11.99f, 5.0f, 9.5f)
+                        curveTo(5.0f, 7.01f, 7.01f, 5.0f, 9.5f, 5.0f)
+                        curveTo(11.99f, 5.0f, 14.0f, 7.01f, 14.0f, 9.5f)
+                        curveTo(14.0f, 11.99f, 11.99f, 14.0f, 9.5f, 14.0f)
+                        close()
+                    }
+                }
+            return _search!!
+        }
+
+    private var _search: ImageVector? = null
+
+    val Close: ImageVector
+        get() {
+            if (_close != null) {
+                return _close!!
+            }
+            _close =
+                materialIcon(name = "Filled.Close") {
+                    materialPath {
+                        moveTo(19.0f, 6.41f)
+                        lineTo(17.59f, 5.0f)
+                        lineTo(12.0f, 10.59f)
+                        lineTo(6.41f, 5.0f)
+                        lineTo(5.0f, 6.41f)
+                        lineTo(10.59f, 12.0f)
+                        lineTo(5.0f, 17.59f)
+                        lineTo(6.41f, 19.0f)
+                        lineTo(12.0f, 13.41f)
+                        lineTo(17.59f, 19.0f)
+                        lineTo(19.0f, 17.59f)
+                        lineTo(13.41f, 12.0f)
+                        close()
+                    }
+                }
+            return _close!!
+        }
+
+    private var _close: ImageVector? = null
+
+    val ArrowBack: ImageVector
+        get() {
+            if (_arrowBack != null) {
+                return _arrowBack!!
+            }
+            _arrowBack =
+                materialIcon(name = "AutoMirrored.Filled.ArrowBack", autoMirror = true) {
+                    materialPath {
+                        moveTo(20.0f, 11.0f)
+                        lineTo(20.0f, 13.0f)
+                        lineTo(8.0f, 13.0f)
+                        lineTo(13.5f, 18.5f)
+                        lineTo(12.08f, 19.92f)
+                        lineTo(4.16f, 12.0f)
+                        lineTo(12.08f, 4.08f)
+                        lineTo(13.5f, 5.5f)
+                        lineTo(8.0f, 11.0f)
+                        close()
+                    }
+                }
+            return _arrowBack!!
+        }
+
+    private var _arrowBack: ImageVector? = null
 }
 
 private inline fun materialIcon(

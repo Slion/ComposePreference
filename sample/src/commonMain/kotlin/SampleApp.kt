@@ -17,26 +17,15 @@
 package me.zhanghai.compose.preference.sample
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
 
+/**
+ * The root of the sample app. On Android the pages are hosted by
+ * [me.zhanghai.compose.preference.PreferencePageScreen] (adaptive two-pane layout); on the
+ * other targets a plain list is shown, since the page screen is Android-only.
+ */
 @Composable
-fun SampleApp() {
-    SampleTheme {
-        ProvidePreferenceLocals {
-            var showPreferenceCards by rememberSaveable { mutableStateOf(false) }
-            if (showPreferenceCards) {
-                PreferenceCardsScreen(onBackClick = { showPreferenceCards = false })
-            } else {
-                SampleScreen(onPreferenceCardsClick = { showPreferenceCards = true })
-            }
-        }
-    }
-}
+expect fun SampleApp()
 
 @Composable
 @Preview

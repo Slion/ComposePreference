@@ -42,7 +42,7 @@ public fun LazyListScope.twoTargetPreference(
         TwoTargetPreference(
             title = title,
             secondTarget = secondTarget,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled,
             icon = icon,
             summary = summary,

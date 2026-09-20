@@ -46,7 +46,7 @@ public inline fun LazyListScope.checkboxPreference(
         CheckboxPreference(
             state = state,
             title = { title(value) },
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled(value),
             icon = icon?.let { { it(value) } },
             summary = summary?.let { { it(value) } },
@@ -69,7 +69,7 @@ public fun LazyListScope.checkboxPreference(
             value = value,
             onValueChange = onValueChange,
             title = title,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled,
             icon = icon,
             summary = summary,

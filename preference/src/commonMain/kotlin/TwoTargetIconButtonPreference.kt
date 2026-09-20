@@ -40,7 +40,7 @@ public fun LazyListScope.twoTargetIconButtonPreference(
         TwoTargetIconButtonPreference(
             title = title,
             iconButtonIcon = iconButtonIcon,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled,
             icon = icon,
             summary = summary,

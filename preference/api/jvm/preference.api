@@ -2,6 +2,8 @@ public final class me/zhanghai/compose/preference/BasicPreferenceKt {
 	public static final fun BasicPreference (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun basicPreference (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)V
 	public static synthetic fun basicPreference$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public static final fun getLocalHighlightedPreferenceKey ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+	public static final fun highlightedKeyModifier (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
 
 public final class me/zhanghai/compose/preference/CheckboxPreferenceKt {
@@ -124,6 +126,20 @@ public abstract interface class me/zhanghai/compose/preference/MutablePreference
 	public abstract fun set (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
+public final class me/zhanghai/compose/preference/PageMatch {
+	public static final field $stable I
+	public fun <init> (Lme/zhanghai/compose/preference/PreferencePage;Ljava/util/List;)V
+	public final fun component1 ()Lme/zhanghai/compose/preference/PreferencePage;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lme/zhanghai/compose/preference/PreferencePage;Ljava/util/List;)Lme/zhanghai/compose/preference/PageMatch;
+	public static synthetic fun copy$default (Lme/zhanghai/compose/preference/PageMatch;Lme/zhanghai/compose/preference/PreferencePage;Ljava/util/List;ILjava/lang/Object;)Lme/zhanghai/compose/preference/PageMatch;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMatches ()Ljava/util/List;
+	public final fun getPage ()Lme/zhanghai/compose/preference/PreferencePage;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class me/zhanghai/compose/preference/PreferenceCardKt {
 	public static final fun PreferenceCard-_6dBP3U (Landroidx/compose/ui/Modifier;Lme/zhanghai/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 	public static final fun preferenceCard-cE-mTA8 (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lme/zhanghai/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;)V
@@ -173,6 +189,48 @@ public final class me/zhanghai/compose/preference/PreferenceKt {
 
 public final class me/zhanghai/compose/preference/PreferenceLocalsKt {
 	public static final fun ProvidePreferenceLocals (Lkotlinx/coroutines/flow/MutableStateFlow;Lme/zhanghai/compose/preference/PreferenceTheme;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class me/zhanghai/compose/preference/PreferencePage {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Lkotlin/jvm/functions/Function1;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lme/zhanghai/compose/preference/PreferencePage;
+	public static synthetic fun copy$default (Lme/zhanghai/compose/preference/PreferencePage;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lme/zhanghai/compose/preference/PreferencePage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Lkotlin/jvm/functions/Function1;
+	public final fun getId ()Ljava/lang/String;
+	public final fun getSearchEntries ()Ljava/util/List;
+	public final fun getSummary ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class me/zhanghai/compose/preference/PreferencePageKt {
+	public static final fun searchPreferencePages (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class me/zhanghai/compose/preference/PreferenceSearchEntry {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lme/zhanghai/compose/preference/PreferenceSearchEntry;
+	public static synthetic fun copy$default (Lme/zhanghai/compose/preference/PreferenceSearchEntry;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lme/zhanghai/compose/preference/PreferenceSearchEntry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getSummary ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class me/zhanghai/compose/preference/PreferenceStateKt {

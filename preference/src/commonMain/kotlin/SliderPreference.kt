@@ -60,7 +60,7 @@ public inline fun LazyListScope.sliderPreference(
         SliderPreference(
             state = state,
             title = { title(sliderValue) },
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             valueRange = valueRange,
             valueSteps = valueSteps,
             sliderState = sliderState,
@@ -94,7 +94,7 @@ public fun LazyListScope.sliderPreference(
             sliderValue = sliderValue,
             onSliderValueChange = onSliderValueChange,
             title = title,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             valueRange = valueRange,
             valueSteps = valueSteps,
             enabled = enabled,

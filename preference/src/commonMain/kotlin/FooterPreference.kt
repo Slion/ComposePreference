@@ -33,7 +33,7 @@ public fun LazyListScope.footerPreference(
     icon: @Composable () -> Unit = FooterPreferenceDefaults.Icon,
 ) {
     item(key = key, contentType = "FooterPreference") {
-        FooterPreference(summary = summary, modifier = modifier, icon = icon)
+        FooterPreference(summary = summary, modifier = modifier.then(highlightedKeyModifier(key)), icon = icon)
     }
 }
 

@@ -37,7 +37,7 @@ public fun LazyListScope.radioButtonPreference(
         RadioButtonPreference(
             selected = selected,
             title = title,
-            modifier = modifier,
+            modifier = modifier.then(highlightedKeyModifier(key)),
             enabled = enabled,
             summary = summary,
             widgetContainer = widgetContainer,

@@ -101,6 +101,14 @@ kotlin {
                 implementation(libs.jetbrains.androidx.lifecycle.runtimeCompose)
             }
         }
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.material3.adaptive)
+                implementation(libs.androidx.material3.adaptive.layout)
+                implementation(libs.androidx.material3.adaptive.navigation)
+            }
+        }
         commonTest { dependencies { implementation(libs.kotlin.test) } }
         jvmWasmJsMain.dependencies { implementation(libs.kotlinx.serialization.json) }
     }
