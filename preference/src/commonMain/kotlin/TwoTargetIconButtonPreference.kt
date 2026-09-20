@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope

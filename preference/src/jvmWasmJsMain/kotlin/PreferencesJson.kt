@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray

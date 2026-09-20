@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2026 Stéphane Lenclud
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference.sample
+package net.slions.compose.preference.sample
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import me.zhanghai.compose.preference.preferenceCategory
+import net.slions.compose.preference.preferenceCategory
 
 /**
  * The non-Android fallback: [PreferencePageScreen] is Android-only, so the pages are shown

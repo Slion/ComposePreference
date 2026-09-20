@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 import androidx.compose.runtime.Composable
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -36,7 +36,7 @@ public fun createPreferenceFlow(storage: Storage): MutableStateFlow<Preferences>
         }
     }
 
-private const val PreferencesKey = "me.zhanghai.compose.preference"
+private const val PreferencesKey = "net.slions.compose.preference"
 
 private var Storage.preferences: Preferences
     get() = getItem(PreferencesKey)?.let { decodePreferencesFromString(it) } ?: MapPreferences()

@@ -24,9 +24,9 @@ plugins {
 
 compose.desktop {
     application {
-        mainClass = "me.zhanghai.compose.preference.sample.MainKt"
+        mainClass = "net.slions.compose.preference.sample.MainKt"
         nativeDistributions {
-            packageName = "me.zhanghai.compose.preference.sample"
+            packageName = "net.slions.compose.preference.sample"
             packageVersion = providers.gradleProperty("VERSION_NAME").get()
             targetFormats(TargetFormat.Deb, TargetFormat.Dmg, TargetFormat.Msi)
         }

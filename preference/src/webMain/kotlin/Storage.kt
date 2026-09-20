@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 public external interface Storage {
     public val length: Int

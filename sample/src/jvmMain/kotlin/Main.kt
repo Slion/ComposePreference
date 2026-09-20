@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference.sample
+package net.slions.compose.preference.sample
 
 import androidx.compose.ui.window.singleWindowApplication
 

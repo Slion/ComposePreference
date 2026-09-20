@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2026 Stéphane Lenclud
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference.sample
+package net.slions.compose.preference.sample
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,31 +25,31 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
-import me.zhanghai.compose.preference.ListPreferenceType
-import me.zhanghai.compose.preference.Preference
-import me.zhanghai.compose.preference.PreferenceCardStyle
-import me.zhanghai.compose.preference.PreferencePage
-import me.zhanghai.compose.preference.PreferenceSearchEntry
-import me.zhanghai.compose.preference.checkboxPreference
-import me.zhanghai.compose.preference.footerPreference
-import me.zhanghai.compose.preference.listPreference
-import me.zhanghai.compose.preference.multiSelectListPreference
-import me.zhanghai.compose.preference.preference
-import me.zhanghai.compose.preference.preferenceCategory
-import me.zhanghai.compose.preference.preferenceCard
-import me.zhanghai.compose.preference.radioButtonPreference
-import me.zhanghai.compose.preference.sliderPreference
-import me.zhanghai.compose.preference.switchPreference
-import me.zhanghai.compose.preference.textFieldPreference
-import me.zhanghai.compose.preference.twoTargetIconButtonPreference
-import me.zhanghai.compose.preference.twoTargetSwitchPreference
+import net.slions.compose.preference.ListPreferenceType
+import net.slions.compose.preference.Preference
+import net.slions.compose.preference.PreferenceCardStyle
+import net.slions.compose.preference.PreferencePage
+import net.slions.compose.preference.PreferenceSearchEntry
+import net.slions.compose.preference.checkboxPreference
+import net.slions.compose.preference.footerPreference
+import net.slions.compose.preference.listPreference
+import net.slions.compose.preference.multiSelectListPreference
+import net.slions.compose.preference.preference
+import net.slions.compose.preference.preferenceCategory
+import net.slions.compose.preference.preferenceCard
+import net.slions.compose.preference.radioButtonPreference
+import net.slions.compose.preference.sliderPreference
+import net.slions.compose.preference.switchPreference
+import net.slions.compose.preference.textFieldPreference
+import net.slions.compose.preference.twoTargetIconButtonPreference
+import net.slions.compose.preference.twoTargetSwitchPreference
 import kotlin.math.roundToInt
 
 const val SampleTitle = "ComposePreference Sample"
 
 /**
  * The sample pages: one page per preference type, hosted by
- * [me.zhanghai.compose.preference.PreferencePageScreen].
+ * [net.slions.compose.preference.PreferencePageScreen].
  */
 @Composable
 fun samplePages(): List<PreferencePage> {

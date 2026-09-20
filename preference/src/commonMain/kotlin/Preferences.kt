@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 public interface Preferences {
     public operator fun <T> get(key: String): T?

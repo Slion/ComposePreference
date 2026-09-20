@@ -20,12 +20,12 @@ plugins {
 }
 
 android {
-    namespace = "me.zhanghai.compose.preference.sample.app"
+    namespace = "net.slions.compose.preference.sample.app"
     buildToolsVersion = libs.versions.android.buildTools.get()
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "me.zhanghai.compose.preference.sample"
+        applicationId = "net.slions.compose.preference.sample"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = providers.gradleProperty("VERSION_CODE").get().toInt()

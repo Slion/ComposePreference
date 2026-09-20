@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference.sample
+package net.slions.compose.preference.sample
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 /**
  * The root of the sample app. On Android the pages are hosted by
- * [me.zhanghai.compose.preference.PreferencePageScreen] (adaptive two-pane layout); on the
+ * [net.slions.compose.preference.PreferencePageScreen] (adaptive two-pane layout); on the
  * other targets a plain list is shown, since the page screen is Android-only.
  */
 @Composable

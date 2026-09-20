@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 import androidx.compose.runtime.Composable
 import java.util.prefs.Preferences as JavaPreferences
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
-private const val PreferenceNodePropertyName = "me.zhanghai.compose.preference.node"
+private const val PreferenceNodePropertyName = "net.slions.compose.preference.node"
 private const val SunJavaCommandPropertyName = "sun.java.command"
 private const val PackagePreferenceNodeName = "preference"
 

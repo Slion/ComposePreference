@@ -34,7 +34,7 @@ kotlin {
     // @see
     // https://github.com/JetBrains/compose-multiplatform/blob/master/components/resources/library/build.gradle.kts
     android {
-        namespace = "me.zhanghai.compose.preference.sample"
+        namespace = "net.slions.compose.preference.sample"
         buildToolsVersion = libs.versions.android.buildTools.get()
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()

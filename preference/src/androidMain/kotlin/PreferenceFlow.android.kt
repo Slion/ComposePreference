@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 import android.content.SharedPreferences
 import androidx.compose.runtime.Composable

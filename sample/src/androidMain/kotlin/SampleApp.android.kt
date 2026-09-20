@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Google LLC
+ * Copyright 2026 Stéphane Lenclud
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference.sample
+package net.slions.compose.preference.sample
 
 import androidx.compose.runtime.Composable
-import me.zhanghai.compose.preference.PreferencePageScreen
-import me.zhanghai.compose.preference.ProvidePreferenceLocals
+import net.slions.compose.preference.PreferencePageScreen
+import net.slions.compose.preference.ProvidePreferenceLocals
 
 @Composable
 actual fun SampleApp() {

@@ -1,9 +1,5 @@
 # Compose Preference
 
-[![Android CI status](https://github.com/zhanghai/ComposePreference/workflows/Android%20CI/badge.svg)](https://github.com/zhanghai/ComposePreference/actions) [![GitHub release](https://img.shields.io/github/v/release/zhanghai/ComposePreference)](https://github.com/zhanghai/ComposePreference/releases) [![License](https://img.shields.io/github/license/zhanghai/ComposePreference?color=blue)](LICENSE)
-
-![Kotlin version](https://img.shields.io/badge/Kotlin-2.3.10-7F52FF?logo=kotlin) ![Compose version](https://img.shields.io/badge/Compose-1.10.2-4285F4?logo=jetpackcompose) ![Platform Android](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android) ![Platform iOS](https://img.shields.io/badge/Platform-iOS-FFFFFF?logo=ios) ![Platform macOS](https://img.shields.io/badge/Platform-macOS-FFFFFF?logo=macos) ![Platform JVM](https://img.shields.io/badge/Platform-JVM-007396?logo=openjdk) ![Platform JS](https://img.shields.io/badge/Platform-JS-F7DF1E?logo=javascript) ![Platform Wasm](https://img.shields.io/badge/Platform-Wasm-654FF0?logo=webassembly)
-
 [Preference](https://developer.android.com/develop/ui/views/components/settings) implementation for [Jetpack Compose](https://developer.android.com/jetpack/compose) [Material 3](https://developer.android.com/jetpack/compose/designsystems/material3).
 
 This is not an officially supported Google product.
@@ -14,11 +10,32 @@ This is not an officially supported Google product.
 
 ## Integration
 
-Gradle:
+This project is consumed as a [git submodule](https://git-scm.com/docs/git-submodule) rather than a published Maven artifact. Add the submodule, then wire it into your build as a [composite build](https://docs.gradle.org/current/userguide/composite_builds.html).
 
-```kotlin
-implementation("me.zhanghai.compose.preference:preference:2.2.0")
-```
+1. Add the submodule:
+
+   ```sh
+   git submodule add https://github.com/Slion/ComposePreference.git third_party/composepreference
+   git submodule update --init --recursive
+   ```
+
+2. Include the submodule as a composite build and substitute the `:preference` module for the library coordinate, in your root `settings.gradle.kts`:
+
+   ```kotlin
+   includeBuild("third_party/composepreference") {
+       dependencySubstitution {
+           substitute(module("net.slions.compose.preference:preference")).using(project(":preference"))
+       }
+   }
+   ```
+
+3. Depend on the library in the modules that use it:
+
+   ```kotlin
+   implementation("net.slions.compose.preference:preference")
+   ```
+
+The composite build ensures the `:preference` module is always used in place of any published artifact.
 
 ## Design
 
@@ -104,18 +121,6 @@ The default data source provided by this library (`createDefaultPreferenceFlow()
 
 If AndroidX DataStore is considered more appropriate for your use case, e.g. you need multi-process support, you can also create an AndroidX DataStore backed implementation that provides a `MutableStateFlow<Preferences>` on your own.
 
-## License
+## Credits
 
-    Copyright 2023 Google LLC
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        https://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+Forked from [zhanghai/ComposePreference](https://github.com/zhanghai/ComposePreference).

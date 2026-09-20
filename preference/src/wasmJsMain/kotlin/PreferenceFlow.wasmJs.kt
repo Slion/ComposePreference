@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package me.zhanghai.compose.preference
+package net.slions.compose.preference
 
 internal actual fun decodePreferencesFromString(string: String): Preferences =
     PreferencesJson.decodeFromString(string)
