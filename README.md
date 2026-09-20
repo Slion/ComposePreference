@@ -1,5 +1,7 @@
 # Compose Preference
 
+[![Android CI](https://github.com/Slion/ComposePreference/actions/workflows/android.yml/badge.svg)](https://github.com/Slion/ComposePreference/actions/workflows/android.yml)
+
 [Preference](https://developer.android.com/develop/ui/views/components/settings) implementation for [Jetpack Compose](https://developer.android.com/jetpack/compose) [Material 3](https://developer.android.com/jetpack/compose/designsystems/material3).
 
 This is not an officially supported Google product.
@@ -42,6 +44,7 @@ The composite build ensures the `:preference` module is always used in place of 
 There is no official and complete Material 3 UX specification for preference yet, so the UX design of this library mainly comes from the following sources:
 
 - [Material Design 3](https://m3.material.io/)
+- [Settings design guidelines](https://developer.android.com/design/ui/mobile/guides/patterns/settings)
 - [Android settings design guidelines](https://source.android.com/docs/core/settings/settings-guidelines)
 - [AndroidX Preference](https://developer.android.com/jetpack/androidx/releases/preference)
 - [AOSP Settings](https://android.googlesource.com/platform/packages/apps/Settings/+/refs/heads/main/)
