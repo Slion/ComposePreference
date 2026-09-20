@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
@@ -63,7 +64,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -132,6 +135,8 @@ public fun PreferencePageScreen(
         delay(400)
         fieldFocusEnabled = true
     }
+    val focusManager = LocalFocusManager.current
+    var fieldFocused by remember { mutableStateOf(false) }
 
     fun clearQuery() {
         query = ""
@@ -238,15 +243,44 @@ public fun PreferencePageScreen(
                                     modifier =
                                         Modifier
                                             .fillMaxSize()
-                                            .padding(start = 16.dp, end = 4.dp),
+                                            .padding(start = 8.dp, end = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.Search,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(24.dp),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
+                                    Box(
+                                        // A fixed-width tappable slot; the icon is centered in it,
+                                        // so its edge lands 16.dp from the pill edge (8.dp row
+                                        // padding + 8.dp within the slot).
+                                        modifier =
+                                            Modifier
+                                                .size(40.dp)
+                                                .clip(RoundedCornerShape(20.dp))
+                                                .then(
+                                                    if (fieldFocused) {
+                                                        Modifier.clickable {
+                                                            focusManager.clearFocus(force = true)
+                                                        }
+                                                    } else {
+                                                        Modifier
+                                                    },
+                                                ),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        if (fieldFocused) {
+                                            Icon(
+                                                imageVector = Icons.ArrowBack,
+                                                contentDescription = "Dismiss search",
+                                                modifier = Modifier.size(24.dp),
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.Search,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(24.dp),
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                    Spacer(Modifier.width(8.dp))
                                     Box(Modifier.weight(1f)) {
                                         if (query.isEmpty()) {
                                             Text(
@@ -270,7 +304,8 @@ public fun PreferencePageScreen(
                                                                 canFocus = false
                                                             }
                                                         },
-                                                    ),
+                                                    )
+                                                    .onFocusChanged { fieldFocused = it.isFocused },
                                             textStyle =
                                                 MaterialTheme.typography.bodyLarge.copy(
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
