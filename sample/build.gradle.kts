@@ -74,10 +74,17 @@ kotlin {
     sourceSets {
         val commonJvmMain by creating { dependsOn(commonMain.get()) }
         val commonJvmTest by creating { dependsOn(commonTest.get()) }
+        val otherMain by creating { dependsOn(commonMain.get()) }
         androidMain { dependsOn(commonJvmMain) }
         androidUnitTest { dependsOn(commonJvmTest) }
-        jvmMain { dependsOn(commonJvmMain) }
+        jvmMain {
+            dependsOn(commonJvmMain)
+            dependsOn(otherMain)
+        }
         jvmTest { dependsOn(commonJvmTest) }
+        nativeMain { dependsOn(otherMain) }
+        jsMain { dependsOn(otherMain) }
+        wasmJsMain { dependsOn(otherMain) }
 
         commonMain {
             dependencies {

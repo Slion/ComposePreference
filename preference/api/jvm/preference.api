@@ -122,6 +122,31 @@ public abstract interface class me/zhanghai/compose/preference/MutablePreference
 	public abstract fun set (Ljava/lang/String;Ljava/lang/Object;)V
 }
 
+public final class me/zhanghai/compose/preference/PreferenceCardKt {
+	public static final fun PreferenceCard-_6dBP3U (Landroidx/compose/ui/Modifier;Lme/zhanghai/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun preferenceCard-cE-mTA8 (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lme/zhanghai/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;)V
+	public static synthetic fun preferenceCard-cE-mTA8$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lme/zhanghai/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+}
+
+public abstract class me/zhanghai/compose/preference/PreferenceCardStyle {
+	public static final field $stable I
+}
+
+public final class me/zhanghai/compose/preference/PreferenceCardStyle$Elevated : me/zhanghai/compose/preference/PreferenceCardStyle {
+	public static final field $stable I
+	public static final field INSTANCE Lme/zhanghai/compose/preference/PreferenceCardStyle$Elevated;
+}
+
+public final class me/zhanghai/compose/preference/PreferenceCardStyle$Filled : me/zhanghai/compose/preference/PreferenceCardStyle {
+	public static final field $stable I
+	public static final field INSTANCE Lme/zhanghai/compose/preference/PreferenceCardStyle$Filled;
+}
+
+public final class me/zhanghai/compose/preference/PreferenceCardStyle$Outlined : me/zhanghai/compose/preference/PreferenceCardStyle {
+	public static final field $stable I
+	public static final field INSTANCE Lme/zhanghai/compose/preference/PreferenceCardStyle$Outlined;
+}
+
 public final class me/zhanghai/compose/preference/PreferenceCategoryKt {
 	public static final fun PreferenceCategory (Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun preferenceCategory (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;)V
