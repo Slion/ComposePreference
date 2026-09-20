@@ -37,6 +37,7 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -375,16 +376,18 @@ public fun PreferencePageScreen(
                                             .fillMaxSize()
                                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                                 ) {
-                                    // The page rows are grouped into a single card, matching
-                                    // the library's preferenceCard look.
+                                    // The page rows are each drawn in their own card, with the
+                                    // first and last showing rounded top/bottom corners.
                                     item {
-                                        PreferenceCard {
+                                        PreferenceCardGroup {
                                             pages.forEach { page ->
-                                                PreferencePageRow(
-                                                    page = page,
-                                                    selected = page.id == selectedPageId,
-                                                    onClick = { selectPage(page.id) },
-                                                )
+                                                card {
+                                                    PreferencePageRow(
+                                                        page = page,
+                                                        selected = page.id == selectedPageId,
+                                                        onClick = { selectPage(page.id) },
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -432,6 +435,12 @@ private fun PreferencePageRow(
     Preference(
         title = { Text(text = page.title) },
         summary = page.summary?.let { summary -> { Text(text = summary) } },
+        actionIcon = {
+            Icon(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = null,
+            )
+        },
         onClick = onClick,
         modifier =
             Modifier.fillMaxWidth().background(
