@@ -63,6 +63,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -122,15 +123,14 @@ public fun PreferencePageScreen(
             if (query != text) query = text
         }
     }
-    // The search field is the first focusable in the list pane, so it grabs initial focus on
-    // launch and pops the keyboard. Clear it once after the field settles, but only if the
-    // user hasn't started a search in the meantime.
-    val focusManager = LocalFocusManager.current
-    LaunchedEffect(focusManager) {
-        delay(800)
-        if (query.isEmpty()) {
-            focusManager.clearFocus(force = true)
-        }
+    // The search field is the first focusable in the list pane, so the focus system restores
+    // focus to it on launch and when returning from the detail pane, showing a brief focus
+    // flash and keyboard. Keep it out of the focus tree during those transitions so focus is
+    // never gained in the first place; it becomes focusable once the pane has settled.
+    var fieldFocusEnabled by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(400)
+        fieldFocusEnabled = true
     }
 
     fun clearQuery() {
@@ -152,7 +152,12 @@ public fun PreferencePageScreen(
         if (!isTwoPane && isOnDetailPane) {
             isOnDetailPane = false
             scope.launch {
+                // Keep the field out of the focus tree while the list pane is restored, so
+                // the focus system does not put focus (and the keyboard) back on it.
+                fieldFocusEnabled = false
                 navigator.navigateBack()
+                delay(400)
+                fieldFocusEnabled = true
             }
         } else {
             onBack()
@@ -254,7 +259,18 @@ public fun PreferencePageScreen(
                                         }
                                         BasicTextField(
                                             state = textFieldState,
-                                            modifier = Modifier.fillMaxWidth(),
+                                            modifier =
+                                                Modifier
+                                                    .fillMaxWidth()
+                                                    .then(
+                                                        if (fieldFocusEnabled) {
+                                                            Modifier
+                                                        } else {
+                                                            Modifier.focusProperties {
+                                                                canFocus = false
+                                                            }
+                                                        },
+                                                    ),
                                             textStyle =
                                                 MaterialTheme.typography.bodyLarge.copy(
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
