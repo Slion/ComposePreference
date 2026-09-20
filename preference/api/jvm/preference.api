@@ -140,10 +140,19 @@ public final class net/slions/compose/preference/PageMatch {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class net/slions/compose/preference/PreferenceCardGroupScope {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun card (Lkotlin/jvm/functions/Function2;)V
+}
+
 public final class net/slions/compose/preference/PreferenceCardKt {
-	public static final fun PreferenceCard-_6dBP3U (Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
-	public static final fun preferenceCard-cE-mTA8 (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;)V
-	public static synthetic fun preferenceCard-cE-mTA8$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static final fun PreferenceCard-NgXqQy4 (Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;FLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun PreferenceCardGroup-m-lYYnc (Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun preferenceCard-nhg5ydc (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;FLkotlin/jvm/functions/Function2;)V
+	public static synthetic fun preferenceCard-nhg5ydc$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lnet/slions/compose/preference/PreferenceCardStyle;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/material3/CardElevation;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/layout/PaddingValues;FLkotlin/jvm/functions/Function2;ILjava/lang/Object;)V
+	public static final fun preferenceCardGroup-OR_i3j0 (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function3;)V
+	public static synthetic fun preferenceCardGroup-OR_i3j0$default (Landroidx/compose/foundation/lazy/LazyListScope;Ljava/lang/String;Landroidx/compose/ui/Modifier;FLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Color;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)V
 }
 
 public abstract class net/slions/compose/preference/PreferenceCardStyle {

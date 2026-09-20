@@ -37,6 +37,7 @@ import net.slions.compose.preference.multiSelectListPreference
 import net.slions.compose.preference.preference
 import net.slions.compose.preference.preferenceCategory
 import net.slions.compose.preference.preferenceCard
+import net.slions.compose.preference.preferenceCardGroup
 import net.slions.compose.preference.radioButtonPreference
 import net.slions.compose.preference.sliderPreference
 import net.slions.compose.preference.switchPreference
@@ -261,6 +262,8 @@ fun samplePages(): List<PreferencePage> {
                         "Extra outer padding",
                     ),
                     PreferenceSearchEntry("card_extra_padding", "Extra content padding"),
+                    PreferenceSearchEntry("card_individual_items", "Individual items"),
+                    PreferenceSearchEntry("card_item_spacing", "Item spacing"),
                 ),
             content = {
                 preferenceCategory(key = "card_filled_category", title = { Text(text = "Filled") })
@@ -358,6 +361,40 @@ fun samplePages(): List<PreferencePage> {
                     Preference(
                         title = { Text(text = "Extra content padding") },
                         summary = { Text(text = "contentPadding = PaddingValues(32.dp)") },
+                    )
+                }
+                preferenceCategory(
+                    key = "card_item_style_category",
+                    title = { Text(text = "Item style") },
+                )
+                preferenceCardGroup(key = "card_individual_items") {
+                    card {
+                        Preference(
+                            title = { Text(text = "Individual items") },
+                            summary = { Text(text = "First card has rounded top corners") },
+                        )
+                    }
+                    card {
+                        Preference(
+                            title = { Text(text = "Individual items (middle)") },
+                            summary = { Text(text = "Middle cards have square corners") },
+                        )
+                    }
+                    card {
+                        Preference(
+                            title = { Text(text = "Individual items (last)") },
+                            summary = { Text(text = "Last card has rounded bottom corners") },
+                        )
+                    }
+                }
+                preferenceCard(key = "card_item_spacing", itemSpacing = 4.dp) {
+                    Preference(
+                        title = { Text(text = "Item spacing") },
+                        summary = { Text(text = "itemSpacing = 4.dp") },
+                    )
+                    Preference(
+                        title = { Text(text = "Item spacing (second)") },
+                        summary = { Text(text = "Gap between items") },
                     )
                 }
                 preferenceCard {
