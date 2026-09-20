@@ -34,6 +34,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -212,7 +216,7 @@ public fun PreferencePageScreen(
                     if (showBack) {
                         IconButton(onClick = ::backAction) {
                             Icon(
-                                imageVector = Icons.ArrowBack,
+                                imageVector = Icons.Filled.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -267,13 +271,13 @@ public fun PreferencePageScreen(
                                     ) {
                                         if (fieldFocused) {
                                             Icon(
-                                                imageVector = Icons.ArrowBack,
+                                                imageVector = Icons.Filled.ArrowBack,
                                                 contentDescription = "Dismiss search",
                                                 modifier = Modifier.size(24.dp),
                                             )
                                         } else {
                                             Icon(
-                                                imageVector = Icons.Search,
+                                                imageVector = Icons.Filled.Search,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(24.dp),
                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -318,7 +322,7 @@ public fun PreferencePageScreen(
                                     if (query.isNotEmpty()) {
                                         IconButton(onClick = ::clearQuery) {
                                             Icon(
-                                                imageVector = Icons.Close,
+                                                imageVector = Icons.Filled.Close,
                                                 contentDescription = "Clear",
                                             )
                                         }
@@ -452,7 +456,7 @@ private fun SearchEntryRow(
                 Text(text = supporting)
             }
         },
-        leadingContent = { Icon(imageVector = Icons.Search, contentDescription = null) },
+        leadingContent = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
     )

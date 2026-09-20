@@ -98,6 +98,9 @@ kotlin {
                 //  compatible versions.
                 implementation(compose.components.resources)
                 implementation(compose.material3)
+                // The extended artifact transitively provides the core icon set
+                // (androidx.compose.material.icons.Icons).
+                implementation(compose.materialIconsExtended)
                 implementation(libs.jetbrains.androidx.lifecycle.runtimeCompose)
             }
         }

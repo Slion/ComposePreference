@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -56,5 +58,5 @@ public fun FooterPreference(
 }
 
 private object FooterPreferenceDefaults {
-    val Icon: @Composable () -> Unit = { Icon(imageVector = Icons.Info, contentDescription = null) }
+    val Icon: @Composable () -> Unit = { Icon(imageVector = Icons.Default.Info, contentDescription = null) }
 }
