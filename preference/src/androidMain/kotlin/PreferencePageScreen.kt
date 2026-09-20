@@ -19,28 +19,28 @@ package me.zhanghai.compose.preference
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -61,11 +61,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -79,9 +82,9 @@ import kotlinx.coroutines.launch
  * - Two-pane (e.g. wide windows): both panes are visible at once; the top bar shows the
  *   screen title and there is no navigation.
  *
- * The list pane shows an MD3 search bar: the collapsed [SearchBar] pill expands (via
- * [SearchBarState]) into the [ExpandedDockedSearchBar] docked search view, where the pages
- * matching the query are listed; selecting a result collapses the bar and opens the page.
+ * The list pane shows an MD3-style search pill; while a query is entered, the page list is
+ * replaced by the matching pages and preference entries, and selecting a result clears the
+ * query and opens the page.
  *
  * @param title Title of the screen, shown in the top bar.
  * @param pages The pages to show in the list pane, in order.
@@ -111,7 +114,6 @@ public fun PreferencePageScreen(
 
     var selectedPageId by rememberSaveable { mutableStateOf<String?>(null) }
     var isOnDetailPane by rememberSaveable { mutableStateOf(false) }
-    val searchBarState = rememberSearchBarState()
     val textFieldState = rememberTextFieldState()
     var query by remember { mutableStateOf("") }
     // Keep the query in sync with the input field's text.
@@ -120,23 +122,13 @@ public fun PreferencePageScreen(
             if (query != text) query = text
         }
     }
-    // Clear the field whenever the search view collapses (e.g. a result was selected, the X
-    // was pressed, or focus was lost).
-    LaunchedEffect(searchBarState) {
-        snapshotFlow { searchBarState.targetValue }.collect { value ->
-            if (value == SearchBarValue.Collapsed && query.isNotEmpty()) {
-                query = ""
-                textFieldState.edit { replace(0, length, "") }
-            }
-        }
-    }
     // The search field is the first focusable in the list pane, so it grabs initial focus on
-    // launch and pops the keyboard. Clear it once after the field settles, but only if the bar
-    // is still collapsed (i.e. the user hasn't started a search in the meantime).
+    // launch and pops the keyboard. Clear it once after the field settles, but only if the
+    // user hasn't started a search in the meantime.
     val focusManager = LocalFocusManager.current
     LaunchedEffect(focusManager) {
         delay(800)
-        if (searchBarState.targetValue != SearchBarValue.Expanded) {
+        if (query.isEmpty()) {
             focusManager.clearFocus(force = true)
         }
     }
@@ -159,7 +151,9 @@ public fun PreferencePageScreen(
     fun backAction() {
         if (!isTwoPane && isOnDetailPane) {
             isOnDetailPane = false
-            scope.launch { navigator.navigateBack() }
+            scope.launch {
+                navigator.navigateBack()
+            }
         } else {
             onBack()
         }
@@ -222,110 +216,116 @@ public fun PreferencePageScreen(
                 listPane = {
                     AnimatedPane {
                         Column(Modifier.fillMaxSize()) {
-                            // Shared input field for the collapsed and expanded search bar. In
-                            // touch mode focus and expansion are coupled: focusing the field
-                            // expands the bar, collapsing it clears the focus. The stock bar has
-                            // no icons, so both slots are caller-supplied: the leading icon is a
-                            // search icon when collapsed and a back arrow when expanded (as in
-                            // the MD3 samples); a trailing clear button only appears while there
-                            // is a query.
-                            val inputField =
-                                @Composable {
-                                    SearchBarDefaults.InputField(
-                                        textFieldState = textFieldState,
-                                        searchBarState = searchBarState,
-                                        // Live filtering as the query changes; the search
-                                        // action itself is a no-op.
-                                        onSearch = {},
-                                        placeholder = { Text(text = "Search") },
-                                        leadingIcon = {
-                                            if (searchBarState.currentValue == SearchBarValue.Expanded) {
-                                                IconButton(
-                                                    onClick = {
-                                                        scope.launch {
-                                                            searchBarState.animateToCollapsed()
-                                                        }
-                                                    },
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.ArrowBack,
-                                                        contentDescription = "Collapse search",
-                                                    )
-                                                }
-                                            } else {
-                                                Icon(
-                                                    imageVector = Icons.Search,
-                                                    contentDescription = null,
-                                                )
-                                            }
-                                        },
-                                        trailingIcon = {
-                                            if (query.isNotEmpty()) {
-                                                IconButton(onClick = ::clearQuery) {
-                                                    Icon(
-                                                        imageVector = Icons.Close,
-                                                        contentDescription = "Clear",
-                                                    )
-                                                }
-                                            }
-                                        },
+                            // An MD3-style search pill. The results are shown inline in this
+                            // pane, so a plain text field is used instead of the state-based
+                            // SearchBarDefaults.InputField, whose touch-mode focus coupling
+                            // would force-expand the bar.
+                            Surface(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                        .padding(horizontal = 8.dp),
+                                shape = RoundedCornerShape(24.dp),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                            ) {
+                                Row(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .padding(start = 16.dp, end = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Search,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
-                                }
-                            SearchBar(
-                                state = searchBarState,
-                                inputField = inputField,
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                            )
-                            ExpandedDockedSearchBar(
-                                state = searchBarState,
-                                inputField = inputField,
-                                content = {
-                                    if (searchEntries.isEmpty()) {
-                                        Text(
-                                            text = "No matching pages",
-                                            modifier = Modifier.padding(16.dp),
+                                    Box(Modifier.weight(1f)) {
+                                        if (query.isEmpty()) {
+                                            Text(
+                                                text = "Search",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier =
+                                                    Modifier.align(Alignment.CenterStart),
+                                            )
+                                        }
+                                        BasicTextField(
+                                            state = textFieldState,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            textStyle =
+                                                MaterialTheme.typography.bodyLarge.copy(
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                ),
+                                            cursorBrush =
+                                                SolidColor(MaterialTheme.colorScheme.primary),
+                                            lineLimits = TextFieldLineLimits.SingleLine,
                                         )
-                                    } else {
-                                        searchEntries.forEach { entry ->
-                                            val matchedKey = entry.key
-                                            SearchEntryRow(
-                                                // An entry match shows the preference's own
-                                                // title with the page as its subtitle; a
-                                                // page match shows the page's title and
-                                                // summary.
-                                                entry =
-                                                    matchedKey
-                                                        ?.let { key ->
-                                                            entry.page.searchEntries.firstOrNull { it.key == key }
-                                                        },
-                                                page = entry.page,
-                                                onClick = {
-                                                    scope.launch {
-                                                        searchBarState.animateToCollapsed()
-                                                    }
-                                                    if (matchedKey != null) {
-                                                        highlightedKey = matchedKey
-                                                    }
-                                                    selectPage(entry.page.id)
-                                                },
+                                    }
+                                    if (query.isNotEmpty()) {
+                                        IconButton(onClick = ::clearQuery) {
+                                            Icon(
+                                                imageVector = Icons.Close,
+                                                contentDescription = "Clear",
                                             )
                                         }
                                     }
-                                },
-                            )
+                                }
+                            }
                             Spacer(Modifier.height(8.dp))
-                            LazyColumn(
-                                modifier =
-                                    Modifier
-                                        .fillMaxSize()
-                                        .nestedScroll(scrollBehavior.nestedScrollConnection),
-                            ) {
-                                items(pages, key = { it.id }) { page ->
-                                    PreferencePageRow(
-                                        page = page,
-                                        selected = !isSearching && page.id == selectedPageId,
-                                        onClick = { selectPage(page.id) },
-                                    )
+                            if (isSearching) {
+                                LazyColumn(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .nestedScroll(scrollBehavior.nestedScrollConnection),
+                                ) {
+                                    items(searchEntries, key = { it.page.id + ":" + it.key }) { entry ->
+                                        val matchedKey = entry.key
+                                        SearchEntryRow(
+                                            // An entry match shows the preference's own title
+                                            // with the page as its subtitle; a page match
+                                            // shows the page's title and summary.
+                                            entry =
+                                                matchedKey
+                                                    ?.let { key ->
+                                                        entry.page.searchEntries.firstOrNull { it.key == key }
+                                                    },
+                                            page = entry.page,
+                                            onClick = {
+                                                clearQuery()
+                                                if (matchedKey != null) {
+                                                    highlightedKey = matchedKey
+                                                }
+                                                selectPage(entry.page.id)
+                                            },
+                                        )
+                                    }
+                                    if (searchEntries.isEmpty()) {
+                                        item {
+                                            Text(
+                                                text = "No matching pages",
+                                                modifier = Modifier.padding(16.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                LazyColumn(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxSize()
+                                            .nestedScroll(scrollBehavior.nestedScrollConnection),
+                                ) {
+                                    items(pages, key = { it.id }) { page ->
+                                        PreferencePageRow(
+                                            page = page,
+                                            selected = page.id == selectedPageId,
+                                            onClick = { selectPage(page.id) },
+                                        )
+                                    }
                                 }
                             }
                         }
