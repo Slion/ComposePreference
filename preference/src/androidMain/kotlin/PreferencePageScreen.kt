@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
@@ -374,12 +375,18 @@ public fun PreferencePageScreen(
                                             .fillMaxSize()
                                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                                 ) {
-                                    items(pages, key = { it.id }) { page ->
-                                        PreferencePageRow(
-                                            page = page,
-                                            selected = page.id == selectedPageId,
-                                            onClick = { selectPage(page.id) },
-                                        )
+                                    // The page rows are grouped into a single card, matching
+                                    // the library's preferenceCard look.
+                                    item {
+                                        PreferenceCard {
+                                            pages.forEach { page ->
+                                                PreferencePageRow(
+                                                    page = page,
+                                                    selected = page.id == selectedPageId,
+                                                    onClick = { selectPage(page.id) },
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                             }
