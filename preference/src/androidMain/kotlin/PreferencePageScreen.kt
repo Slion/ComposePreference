@@ -124,8 +124,51 @@ public fun PreferencePageScreen(
         )
     val scope = rememberCoroutineScope()
 
-    var selectedPageId by rememberSaveable { mutableStateOf<String?>(null) }
-    var isOnDetailPane by rememberSaveable { mutableStateOf(false) }
+    // The search field is the first focusable in the list pane, so the focus system restores
+    // focus to it on launch and when the list pane is restored, showing a brief focus flash and
+    // keyboard. Keep it out of the focus tree during those transitions so focus is never gained
+    // in the first place; it becomes focusable once the pane has settled.
+    var fieldFocusEnabled by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(400)
+        fieldFocusEnabled = true
+    }
+
+    // The scaffold's destination is the single source of truth for which page (if any) the
+    // detail pane shows, so the top bar title and the list-pane selection highlight follow
+    // the real navigation state (including across configuration changes such as rotation).
+    val destination = navigator.currentDestination
+    val selectedPageId: String? =
+        if (destination?.pane == ListDetailPaneScaffoldRole.Detail) {
+            destination.contentKey
+        } else {
+            null
+        }
+    // Keep the pane layout in sync with the window size:
+    // - Growing to two-pane with no detail destination shows only the list pane until the user
+    //   taps a row. Open a page right away (the last selected one, or the first page) so the
+    //   two-pane layout appears immediately on rotation.
+    // - Shrinking back to a single partition leaves the destination history pointing at the
+    //   detail pane, which keeps the detail pane expanded (and the list hidden) until the user
+    //   presses back. Pop back to the list so the layout collapses to single-pane immediately.
+    LaunchedEffect(isTwoPane) {
+        val onDetail = navigator.currentDestination?.pane == ListDetailPaneScaffoldRole.Detail
+        when {
+            isTwoPane && !onDetail ->
+                navigator.navigateTo(
+                    pane = ListDetailPaneScaffoldRole.Detail,
+                    contentKey = navigator.currentDestination?.contentKey ?: pages.first().id,
+                )
+            !isTwoPane && onDetail -> {
+                // Keep the field out of the focus tree while the list pane is restored, so the
+                // focus system does not put focus (and the keyboard) back on it.
+                fieldFocusEnabled = false
+                navigator.navigateBack()
+                delay(400)
+                fieldFocusEnabled = true
+            }
+        }
+    }
     val textFieldState = rememberTextFieldState()
     var query by remember { mutableStateOf("") }
     // Keep the query in sync with the input field's text.
@@ -133,15 +176,6 @@ public fun PreferencePageScreen(
         snapshotFlow { textFieldState.text.toString() }.collect { text ->
             if (query != text) query = text
         }
-    }
-    // The search field is the first focusable in the list pane, so the focus system restores
-    // focus to it on launch and when returning from the detail pane, showing a brief focus
-    // flash and keyboard. Keep it out of the focus tree during those transitions so focus is
-    // never gained in the first place; it becomes focusable once the pane has settled.
-    var fieldFocusEnabled by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        delay(400)
-        fieldFocusEnabled = true
     }
     val focusManager = LocalFocusManager.current
     var fieldFocused by remember { mutableStateOf(false) }
@@ -166,8 +200,7 @@ public fun PreferencePageScreen(
     var scrollToIndex by remember { mutableStateOf<Int?>(null) }
 
     fun backAction() {
-        if (!isTwoPane && isOnDetailPane) {
-            isOnDetailPane = false
+        if (!isTwoPane && destination?.pane == ListDetailPaneScaffoldRole.Detail) {
             scope.launch {
                 // Keep the field out of the focus tree while the list pane is restored, so
                 // the focus system does not put focus (and the keyboard) back on it.
@@ -185,8 +218,6 @@ public fun PreferencePageScreen(
     BackHandler(onBack = ::backAction)
 
     fun selectPage(pageId: String) {
-        selectedPageId = pageId
-        isOnDetailPane = true
         scope.launch {
             navigator.navigateTo(pane = ListDetailPaneScaffoldRole.Detail, contentKey = pageId)
         }
@@ -215,8 +246,8 @@ public fun PreferencePageScreen(
         }
 
     val currentPage = selectedPageId?.let { id -> pages.firstOrNull { it.id == id } }
-    val visiblePage = if (isTwoPane || isOnDetailPane) currentPage else null
-    val showBack = !isTwoPane && visiblePage != null
+    val showBack =
+        !isTwoPane && destination?.pane == ListDetailPaneScaffoldRole.Detail && currentPage != null
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Surface(
@@ -225,7 +256,7 @@ public fun PreferencePageScreen(
     ) {
         Column(Modifier.fillMaxSize()) {
             TopAppBar(
-                title = { Text(text = visiblePage?.title ?: title) },
+                title = { Text(text = currentPage?.title ?: title) },
                 navigationIcon = {
                     if (showBack) {
                         IconButton(onClick = ::backAction) {
