@@ -197,7 +197,6 @@ public fun SliderPreference(
                     Modifier.padding(
                         theme.padding.copy(
                             start = if (icon != null) 0.dp else Dp.Unspecified,
-                            end = 0.dp,
                         )
                     )
             ) {

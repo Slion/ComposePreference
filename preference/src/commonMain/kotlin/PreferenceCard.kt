@@ -214,6 +214,7 @@ private fun CardContent(
         for (row in rows) {
             Preference(
                 title = row.title,
+                modifier = Modifier.fillMaxWidth(),
                 summary = row.summary,
                 icon = row.icon,
                 widgetContainer = row.widgetContainer,

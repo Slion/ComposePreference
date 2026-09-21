@@ -16,6 +16,7 @@
 
 package net.slions.compose.preference.sample
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Speed
@@ -38,8 +39,11 @@ import kotlin.math.roundToInt
 
 /** The [net.slions.compose.preference.SliderPreference] page: stateful and value-based. */
 @Composable
-fun sliderPreferencePage(): PreferencePage =
-    PreferencePage(
+fun sliderPreferencePage(): PreferencePage {
+    // The page owns the value of the value-based slider (the content builder is not a
+    // composable scope, so the state is hoisted here).
+    val valueBasedState = remember { mutableFloatStateOf(0.75f) }
+    return PreferencePage(
         id = "slider",
         title = "Slider",
         summary = "Ranges, steps, dynamic text, and disabled rows.",
@@ -95,27 +99,37 @@ fun sliderPreferencePage(): PreferencePage =
             )
         }
         preferenceCategory(key = "slider_value_category", title = "Value-based")
-        sliderPreference(
-            key = "slider_value",
-            value = 0.75f,
-            onValueChange = {},
-            sliderValue = 0.75f,
-            onSliderValueChange = {},
-            title = "Static",
-            summary = "A fixed description.",
-            valueText = { (it * 100).roundToInt().toString() },
-        )
+        // Value-based: the page owns the value and hands it to the composable with real
+        // change handlers. The value is read inside the item's composable scope (not in the
+        // non-composable content builder), so the row recomposes when the value changes.
+        item(key = "slider_value", contentType = "SliderPreference") {
+            val value by valueBasedState
+            SliderPreference(
+                value = value,
+                onValueChange = { valueBasedState.floatValue = it },
+                sliderValue = value,
+                onSliderValueChange = { valueBasedState.floatValue = it },
+                title = "Host-controlled",
+                summary = "The page supplies the value and handlers.",
+                valueText = { (it * 100).roundToInt().toString() },
+            )
+        }
         preferenceCategory(key = "slider_cards_category", title = "Cards")
         preferenceCard(key = "slider_card") {
             preference(
                 title = "Card slider",
                 summary = "A slider in a card row's widget slot.",
                 widgetContainer = {
+                    val state = rememberPreferenceState<Float>("slider_card_value", 0.5f)
+                    val value by state
+                    // The card row is full-width, but the slider must not take all of it: a
+                    // weightless Slider in the (non-weighted) widget slot would squeeze the
+                    // title, so pin a sensible width. The end padding gives the slider the
+                    // same clearance from the card edge the switch widget gets.
                     androidx.compose.material3.Slider(
-                        value = 0.5f,
-                        onValueChange = {},
-                        // A full-width slider would squeeze the row's text, so pin its width.
-                        modifier = Modifier.width(160.dp),
+                        value = value,
+                        onValueChange = { state.value = it },
+                        modifier = Modifier.width(180.dp).padding(end = 16.dp),
                     )
                 },
             )
@@ -145,3 +159,4 @@ fun sliderPreferencePage(): PreferencePage =
             }
         }
     }
+}
