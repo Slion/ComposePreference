@@ -135,6 +135,17 @@ public fun PreferencePageScreen(
         fieldFocusEnabled = true
     }
 
+    // The pane whose content last had focus (e.g. the user was scrolling/interacting with the
+    // detail list, or with the page list/search). Decides which pane a collapse to single-pane
+    // lands on: the sub page if the detail was in use, the root list otherwise. Null until
+    // focus is actually observed (fresh launch).
+    var lastActivePane by rememberSaveable { mutableStateOf<ActivePane?>(null) }
+
+    fun trackPaneFocus(pane: ActivePane) =
+        Modifier.onFocusChanged {
+            if (it.isFocused && lastActivePane != pane) lastActivePane = pane
+        }
+
     // The scaffold's destination is the single source of truth for which page (if any) the
     // detail pane shows, so the top bar title and the list-pane selection highlight follow
     // the real navigation state (including across configuration changes such as rotation).
@@ -169,12 +180,19 @@ public fun PreferencePageScreen(
                     ?.snapTo(navigator.scaffoldValue)
             }
             !isTwoPane && onDetail -> {
-                // Keep the field out of the focus tree while the list pane is restored, so the
-                // focus system does not put focus (and the keyboard) back on it.
-                fieldFocusEnabled = false
-                navigator.navigateBack()
-                delay(400)
-                fieldFocusEnabled = true
+                if (lastActivePane != ActivePane.List) {
+                    // The detail was in use (or focus was never observed, e.g. right after
+                    // launch in two-pane), so keep it visible in single-pane too.
+                    (navigator.scaffoldState as? MutableThreePaneScaffoldState)
+                        ?.snapTo(navigator.scaffoldValue)
+                } else {
+                    // Keep the field out of the focus tree while the list pane is restored, so
+                    // the focus system does not put focus (and the keyboard) back on it.
+                    fieldFocusEnabled = false
+                    navigator.navigateBack()
+                    delay(400)
+                    fieldFocusEnabled = true
+                }
             }
         }
     }
@@ -283,7 +301,9 @@ public fun PreferencePageScreen(
                 scaffoldState = navigator.scaffoldState,
                 listPane = {
                     AnimatedPane {
-                        Column(Modifier.fillMaxSize()) {
+                        Column(
+                            Modifier.fillMaxSize().then(trackPaneFocus(ActivePane.List)),
+                        ) {
                             // An MD3-style search pill. The results are shown inline in this
                             // pane, so a plain text field is used instead of the state-based
                             // SearchBarDefaults.InputField, whose touch-mode focus coupling
@@ -471,7 +491,8 @@ public fun PreferencePageScreen(
                                     modifier =
                                         Modifier
                                             .fillMaxSize()
-                                            .nestedScroll(scrollBehavior.nestedScrollConnection),
+                                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                                            .then(trackPaneFocus(ActivePane.Detail)),
                                 ) {
                                     page.content(this)
                                 }
@@ -483,6 +504,9 @@ public fun PreferencePageScreen(
         }
     }
 }
+
+/** The panes that can hold focus; the last one to do so decides single-pane landing. */
+private enum class ActivePane { List, Detail }
 
 /** A search result row: a page, or a preference entry of one of its pages. */
 private data class SearchEntry(val id: Int, val page: PreferencePage, val entry: SearchIndexEntry?)
