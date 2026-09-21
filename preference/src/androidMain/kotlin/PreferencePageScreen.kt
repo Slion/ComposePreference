@@ -58,6 +58,7 @@ import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.MutableThreePaneScaffoldState
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
@@ -159,6 +160,14 @@ public fun PreferencePageScreen(
                     pane = ListDetailPaneScaffoldRole.Detail,
                     contentKey = navigator.currentDestination?.contentKey ?: pages.first().id,
                 )
+            isTwoPane && onDetail -> {
+                // Material3's internal snapTo (in rememberThreePaneScaffoldNavigator) does not
+                // reliably fire across a config change when the detail is already open, so the
+                // scaffold state stays at the stale single-pane value. Force it to the derived
+                // two-pane value.
+                (navigator.scaffoldState as? MutableThreePaneScaffoldState)
+                    ?.snapTo(navigator.scaffoldValue)
+            }
             !isTwoPane && onDetail -> {
                 // Keep the field out of the focus tree while the list pane is restored, so the
                 // focus system does not put focus (and the keyboard) back on it.
