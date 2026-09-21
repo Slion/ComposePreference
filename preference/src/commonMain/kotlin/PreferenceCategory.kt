@@ -22,16 +22,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
+/**
+ * Adds a category header to the lazy list.
+ *
+ * @param key The lazy list key of the header.
+ * @param title The title of the header. Also used as the header's search text.
+ * @param modifier Modifier applied to the header.
+ */
 public fun LazyListScope.preferenceCategory(
     key: String,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
+    SearchIndexer.record(key, title)
     item(key = key, contentType = "PreferenceCategory") {
         PreferenceCategory(
             title = title,
@@ -41,7 +50,7 @@ public fun LazyListScope.preferenceCategory(
 }
 
 @Composable
-public fun PreferenceCategory(title: @Composable () -> Unit, modifier: Modifier = Modifier) {
+public fun PreferenceCategory(title: String, modifier: Modifier = Modifier) {
     BasicPreference(
         textContainer = {
             val theme = LocalPreferenceTheme.current
@@ -50,7 +59,9 @@ public fun PreferenceCategory(title: @Composable () -> Unit, modifier: Modifier 
                 contentAlignment = Alignment.CenterStart,
             ) {
                 CompositionLocalProvider(LocalContentColor provides theme.categoryColor) {
-                    ProvideTextStyle(value = theme.categoryTextStyle, content = title)
+                    ProvideTextStyle(value = theme.categoryTextStyle) {
+                        Text(text = title)
+                    }
                 }
             }
         },

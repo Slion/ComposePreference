@@ -30,29 +30,30 @@ import androidx.compose.ui.unit.dp
 public inline fun LazyListScope.twoTargetSwitchPreference(
     key: String,
     defaultValue: Boolean,
-    crossinline title: @Composable (Boolean) -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     crossinline rememberState: @Composable () -> MutableState<Boolean> = {
         rememberPreferenceState(key, defaultValue)
     },
     noinline enabled: (Boolean) -> Boolean = { true },
     noinline icon: @Composable ((Boolean) -> Unit)? = null,
-    noinline summary: @Composable ((Boolean) -> Unit)? = null,
+    noinline summary: ((Boolean) -> String?)? = null,
+    staticSummary: String? = null,
     noinline switchEnabled: (Boolean) -> Boolean = enabled,
     noinline onClick: ((Boolean) -> Unit)? = null,
 ) {
+    SearchIndexer.record(key, title, staticSummary)
     item(key = key, contentType = "TwoTargetSwitchPreference") {
         val state = rememberState()
-        val value by state
         TwoTargetSwitchPreference(
             state = state,
-            title = { title(value) },
+            title = title,
             modifier = modifier.then(highlightedKeyModifier(key)),
-            enabled = enabled(value),
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
-            switchEnabled = switchEnabled(value),
-            onClick = onClick?.let { { it(value) } },
+            enabled = enabled,
+            icon = icon,
+            summary = summary,
+            switchEnabled = switchEnabled,
+            onClick = onClick,
         )
     }
 }
@@ -61,14 +62,16 @@ public fun LazyListScope.twoTargetSwitchPreference(
     key: String,
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     switchEnabled: Boolean = enabled,
     onClick: (() -> Unit)? = null,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "TwoTargetSwitchPreference") {
         TwoTargetSwitchPreference(
             value = value,
@@ -87,13 +90,13 @@ public fun LazyListScope.twoTargetSwitchPreference(
 @Composable
 public fun TwoTargetSwitchPreference(
     state: MutableState<Boolean>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
-    switchEnabled: Boolean = enabled,
-    onClick: (() -> Unit)? = null,
+    enabled: (Boolean) -> Boolean = { true },
+    icon: @Composable ((Boolean) -> Unit)? = null,
+    summary: ((Boolean) -> String?)? = null,
+    switchEnabled: (Boolean) -> Boolean = { true },
+    onClick: ((Boolean) -> Unit)? = null,
 ) {
     var value by state
     TwoTargetSwitchPreference(
@@ -101,11 +104,11 @@ public fun TwoTargetSwitchPreference(
         onValueChange = { value = it },
         title = title,
         modifier = modifier,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
-        switchEnabled = switchEnabled,
-        onClick = onClick,
+        enabled = enabled(value),
+        icon = icon?.let { { it(value) } },
+        summary = summary?.invoke(value),
+        switchEnabled = switchEnabled(value),
+        onClick = onClick?.let { { it(value) } },
     )
 }
 
@@ -113,11 +116,11 @@ public fun TwoTargetSwitchPreference(
 public fun TwoTargetSwitchPreference(
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     switchEnabled: Boolean = enabled,
     onClick: (() -> Unit)? = null,
 ) {

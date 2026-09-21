@@ -46,32 +46,34 @@ import org.jetbrains.compose.resources.stringResource
 public inline fun <T> LazyListScope.textFieldPreference(
     key: String,
     defaultValue: T,
-    crossinline title: @Composable (T) -> Unit,
+    title: String,
     noinline textToValue: (String) -> T?,
     modifier: Modifier = Modifier.fillMaxWidth(),
     crossinline rememberState: @Composable () -> MutableState<T> = {
         rememberPreferenceState(key, defaultValue)
     },
-    crossinline enabled: (T) -> Boolean = { true },
+    noinline enabled: (T) -> Boolean = { true },
     noinline icon: @Composable ((T) -> Unit)? = null,
-    noinline summary: @Composable ((T) -> Unit)? = null,
+    noinline summary: ((T) -> String?)? = null,
+    staticSummary: String? = null,
     noinline valueToText: (T) -> String = { it.toString() },
     noinline textField:
         @Composable
         (value: TextFieldValue, onValueChange: (TextFieldValue) -> Unit, onOk: () -> Unit) -> Unit =
         TextFieldPreferenceDefaults.TextField,
 ) {
+    SearchIndexer.record(key, title, staticSummary)
     item(key = key, contentType = "TextFieldPreference") {
         val state = rememberState()
         val value by state
         TextFieldPreference(
             state = state,
-            title = { title(value) },
+            title = title,
             textToValue = textToValue,
             modifier = modifier.then(highlightedKeyModifier(key)),
-            enabled = enabled(value),
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
+            enabled = enabled,
+            icon = icon,
+            summary = summary,
             valueToText = valueToText,
             textField = textField,
         )
@@ -82,18 +84,20 @@ public fun <T> LazyListScope.textFieldPreference(
     key: String,
     value: T,
     onValueChange: (T) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     textToValue: (String) -> T?,
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     valueToText: (T) -> String = { it.toString() },
     textField:
         @Composable
         (value: TextFieldValue, onValueChange: (TextFieldValue) -> Unit, onOk: () -> Unit) -> Unit =
         TextFieldPreferenceDefaults.TextField,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "TextFieldPreference") {
         TextFieldPreference(
             value = value,
@@ -113,12 +117,12 @@ public fun <T> LazyListScope.textFieldPreference(
 @Composable
 public fun <T> TextFieldPreference(
     state: MutableState<T>,
-    title: @Composable () -> Unit,
+    title: String,
     textToValue: (String) -> T?,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    enabled: (T) -> Boolean = { true },
+    icon: @Composable ((T) -> Unit)? = null,
+    summary: ((T) -> String?)? = null,
     valueToText: (T) -> String = { it.toString() },
     textField:
         @Composable
@@ -132,9 +136,9 @@ public fun <T> TextFieldPreference(
         title = title,
         textToValue = textToValue,
         modifier = modifier,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
+        enabled = enabled(value),
+        icon = icon?.let { { it(value) } },
+        summary = summary?.invoke(value),
         valueToText = valueToText,
         textField = textField,
     )
@@ -144,12 +148,12 @@ public fun <T> TextFieldPreference(
 public fun <T> TextFieldPreference(
     value: T,
     onValueChange: (T) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     textToValue: (String) -> T?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     valueToText: (T) -> String = { it.toString() },
     textField:
         @Composable
@@ -181,7 +185,7 @@ public fun <T> TextFieldPreference(
         }
         PreferenceAlertDialog(
             onDismissRequest = { openDialog = false },
-            title = title,
+            title = { Text(text = title) },
             buttons = {
                 TextButton(onClick = { openDialog = false }) {
                     Text(text = stringResource(Res.string.cancel))

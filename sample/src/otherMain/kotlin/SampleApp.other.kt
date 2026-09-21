@@ -45,7 +45,7 @@ actual fun SampleApp() {
                 pages.forEach { page ->
                     preferenceCategory(
                         key = "page_${page.id}",
-                        title = { Text(text = page.title) },
+                        title = page.title,
                     )
                     page.content(this)
                 }

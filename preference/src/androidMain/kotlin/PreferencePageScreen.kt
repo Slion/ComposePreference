@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import kotlinx.coroutines.flow.first
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -159,6 +161,10 @@ public fun PreferencePageScreen(
         }
     }
 
+    // The lazy list index of the row a search result navigated to; the detail pane scrolls to
+    // it when set.
+    var scrollToIndex by remember { mutableStateOf<Int?>(null) }
+
     fun backAction() {
         if (!isTwoPane && isOnDetailPane) {
             isOnDetailPane = false
@@ -187,17 +193,23 @@ public fun PreferencePageScreen(
     }
 
     val isSearching = query.isNotEmpty()
-    val matches = remember(pages, query) { searchPreferencePages(pages, query) }
+    // The search index is built once by walking each page's preference tree, so it is always
+    // in sync with the rows — no separate search entries to maintain.
+    val index = remember(pages) { buildSearchIndex(pages) }
+    val matches = remember(pages, index, query) { searchPreferencePages(pages, index, query) }
     val searchEntries =
         remember(matches) {
+            // A unique id per row (several rows can share an entry key, e.g. the rows of the
+            // same card), so the results list can key on it.
+            var rowId = 0
             matches.flatMap { match ->
                 buildList {
                     if (match.matches.isEmpty()) {
                         // The page itself matched (by title/summary): show the page row.
-                        add(SearchEntry(match.page, key = null))
+                        add(SearchEntry(id = rowId++, page = match.page, entry = null))
                     }
                     // Show one row per matching preference entry of the page's tree.
-                    addAll(match.matches.map { SearchEntry(match.page, key = it.key) })
+                    addAll(match.matches.map { SearchEntry(id = rowId++, page = match.page, entry = it) })
                 }
             }
         }
@@ -339,22 +351,20 @@ public fun PreferencePageScreen(
                                             .fillMaxSize()
                                             .nestedScroll(scrollBehavior.nestedScrollConnection),
                                 ) {
-                                    items(searchEntries, key = { it.page.id + ":" + it.key }) { entry ->
-                                        val matchedKey = entry.key
+                                    items(searchEntries, key = { it.id }) {
+                                        entry ->
+                                        val matchedEntry = entry.entry
                                         SearchEntryRow(
                                             // An entry match shows the preference's own title
                                             // with the page as its subtitle; a page match
                                             // shows the page's title and summary.
-                                            entry =
-                                                matchedKey
-                                                    ?.let { key ->
-                                                        entry.page.searchEntries.firstOrNull { it.key == key }
-                                                    },
+                                            entry = matchedEntry,
                                             page = entry.page,
                                             onClick = {
                                                 clearQuery()
-                                                if (matchedKey != null) {
-                                                    highlightedKey = matchedKey
+                                                if (matchedEntry != null) {
+                                                    highlightedKey = matchedEntry.key
+                                                    scrollToIndex = matchedEntry.index
                                                 }
                                                 selectPage(entry.page.id)
                                             },
@@ -403,7 +413,21 @@ public fun PreferencePageScreen(
                             CompositionLocalProvider(
                                 LocalHighlightedPreferenceKey provides highlightedKey,
                             ) {
+                                val listState = rememberLazyListState()
+                                // Scroll to the row a search result navigated to, once the
+                                // page's list is composed (the detail pane is composed
+                                // asynchronously, so wait for it to be laid out).
+                                LaunchedEffect(page.id, scrollToIndex) {
+                                    val target = scrollToIndex ?: return@LaunchedEffect
+                                    // The detail pane is composed asynchronously, so wait for
+                                    // the page's list to be laid out with enough items first.
+                                    snapshotFlow { listState.layoutInfo.totalItemsCount }
+                                        .first { it > target }
+                                    listState.animateScrollToItem(target)
+                                    scrollToIndex = null
+                                }
                                 LazyColumn(
+                                    state = listState,
                                     modifier =
                                         Modifier
                                             .fillMaxSize()
@@ -421,7 +445,7 @@ public fun PreferencePageScreen(
 }
 
 /** A search result row: a page, or a preference entry of one of its pages. */
-private data class SearchEntry(val page: PreferencePage, val key: String?)
+private data class SearchEntry(val id: Int, val page: PreferencePage, val entry: SearchIndexEntry?)
 
 /**
  * One row of the list pane, styled with the library's preference theme.
@@ -433,8 +457,8 @@ private fun PreferencePageRow(
     onClick: () -> Unit,
 ) {
     Preference(
-        title = { Text(text = page.title) },
-        summary = page.summary?.let { summary -> { Text(text = summary) } },
+        title = page.title,
+        summary = page.summary,
         actionIcon = {
             Icon(
                 imageVector = Icons.Filled.ChevronRight,
@@ -460,7 +484,7 @@ private fun PreferencePageRow(
  */
 @Composable
 private fun SearchEntryRow(
-    entry: PreferenceSearchEntry?,
+    entry: SearchIndexEntry?,
     page: PreferencePage,
     onClick: () -> Unit,
 ) {

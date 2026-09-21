@@ -63,9 +63,9 @@ AppTheme {
             switchPreference(
                 key = "switch_preference",
                 defaultValue = false,
-                title = { Text(text = "Switch preference") },
+                title = "Switch preference",
                 icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = null) },
-                summary = { Text(text = if (it) "On" else "Off") }
+                summary = { if (it) "On" else "Off" }
             )
         }
     }

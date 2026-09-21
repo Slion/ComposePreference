@@ -26,16 +26,18 @@ import androidx.compose.ui.unit.dp
 
 public fun LazyListScope.twoTargetIconButtonPreference(
     key: String,
-    title: @Composable () -> Unit,
+    title: String,
     iconButtonIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     onClick: (() -> Unit)? = null,
     iconButtonEnabled: Boolean = enabled,
     onIconButtonClick: () -> Unit,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "TwoTargetIconButtonPreference") {
         TwoTargetIconButtonPreference(
             title = title,
@@ -53,12 +55,12 @@ public fun LazyListScope.twoTargetIconButtonPreference(
 
 @Composable
 public fun TwoTargetIconButtonPreference(
-    title: @Composable () -> Unit,
+    title: String,
     iconButtonIcon: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     onClick: (() -> Unit)? = null,
     iconButtonEnabled: Boolean = enabled,
     onIconButtonClick: () -> Unit,

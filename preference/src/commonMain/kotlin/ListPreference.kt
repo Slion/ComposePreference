@@ -56,34 +56,53 @@ public enum class ListPreferenceType {
     DROPDOWN_MENU,
 }
 
+/**
+ * Adds a list preference row to the lazy list, whose state is remembered by [key].
+ *
+ * @param key The lazy list key of the row, and the preference state key.
+ * @param defaultValue The initial selected value.
+ * @param values The values the user can choose from.
+ * @param title The title of the row. Also used as the row's search text.
+ * @param modifier Modifier applied to the row.
+ * @param rememberState How the row's state is remembered.
+ * @param enabled Whether the row is enabled, based on the current value.
+ * @param icon The leading icon, based on the current value.
+ * @param summary The summary text, based on the current value.
+ * @param staticSummary A static summary used in the [buildSearchIndex] index.
+ * @param type The type of the list, either an alert dialog or a dropdown menu.
+ * @param valueToText How a value is rendered in the list.
+ * @param item How a list item is rendered.
+ */
 public inline fun <T> LazyListScope.listPreference(
     key: String,
     defaultValue: T,
     values: List<T>,
-    crossinline title: @Composable (T) -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     crossinline rememberState: @Composable () -> MutableState<T> = {
         rememberPreferenceState(key, defaultValue)
     },
-    crossinline enabled: (T) -> Boolean = { true },
+    noinline enabled: (T) -> Boolean = { true },
     noinline icon: @Composable ((T) -> Unit)? = null,
-    noinline summary: @Composable ((T) -> Unit)? = null,
+    noinline summary: ((T) -> String?)? = null,
+    staticSummary: String? = null,
     type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
     noinline valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     noinline item: @Composable (value: T, currentValue: T, onClick: () -> Unit) -> Unit =
         ListPreferenceDefaults.item(type, valueToText),
 ) {
+    SearchIndexer.record(key, title, staticSummary)
     item(key = key, contentType = "ListPreference") {
         val state = rememberState()
         val value by state
         ListPreference(
             state = state,
             values = values,
-            title = { title(value) },
+            title = title,
             modifier = modifier.then(highlightedKeyModifier(key)),
-            enabled = enabled(value),
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
+            enabled = enabled,
+            icon = icon,
+            summary = summary,
             type = type,
             valueToText = valueToText,
             item = item,
@@ -91,21 +110,40 @@ public inline fun <T> LazyListScope.listPreference(
     }
 }
 
+/**
+ * Adds a list preference row to the lazy list, whose value is controlled by the caller.
+ *
+ * @param key The lazy list key of the row.
+ * @param value The current selected value.
+ * @param onValueChange Called when a new value is selected.
+ * @param values The values the user can choose from.
+ * @param title The title of the row. Also used as the row's search text.
+ * @param modifier Modifier applied to the row.
+ * @param enabled Whether the row is enabled.
+ * @param icon The leading icon.
+ * @param summary The summary text, based on the current value.
+ * @param staticSummary A static summary used in the [buildSearchIndex] index.
+ * @param type The type of the list, either an alert dialog or a dropdown menu.
+ * @param valueToText How a value is rendered in the list.
+ * @param item How a list item is rendered.
+ */
 public fun <T> LazyListScope.listPreference(
     key: String,
     value: T,
     onValueChange: (T) -> Unit,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValue: T, onClick: () -> Unit) -> Unit =
         ListPreferenceDefaults.item(type, valueToText),
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "ListPreference") {
         ListPreference(
             value = value,
@@ -127,11 +165,11 @@ public fun <T> LazyListScope.listPreference(
 public fun <T> ListPreference(
     state: MutableState<T>,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    enabled: (T) -> Boolean = { true },
+    icon: @Composable ((T) -> Unit)? = null,
+    summary: ((T) -> String?)? = null,
     type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValue: T, onClick: () -> Unit) -> Unit =
@@ -144,9 +182,9 @@ public fun <T> ListPreference(
         values = values,
         title = title,
         modifier = modifier,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
+        enabled = enabled(value),
+        icon = icon?.let { { it(value) } },
+        summary = summary?.invoke(value),
         type = type,
         valueToText = valueToText,
         item = item,
@@ -158,11 +196,11 @@ public fun <T> ListPreference(
     value: T,
     onValueChange: (T) -> Unit,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     type: ListPreferenceType = ListPreferenceType.ALERT_DIALOG,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValue: T, onClick: () -> Unit) -> Unit =
@@ -175,7 +213,7 @@ public fun <T> ListPreference(
             ListPreferenceType.ALERT_DIALOG -> {
                 PreferenceAlertDialog(
                     onDismissRequest = { openSelector = false },
-                    title = title,
+                    title = { Text(text = title) },
                     buttons = {
                         TextButton(onClick = { openSelector = false }) {
                             Text(text = stringResource(Res.string.cancel))

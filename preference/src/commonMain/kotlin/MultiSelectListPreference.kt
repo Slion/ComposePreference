@@ -51,31 +51,33 @@ public inline fun <T> LazyListScope.multiSelectListPreference(
     key: String,
     defaultValue: Set<T>,
     values: List<T>,
-    crossinline title: @Composable (Set<T>) -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     crossinline rememberState: @Composable () -> MutableState<Set<T>> = {
         rememberPreferenceState(key, defaultValue)
     },
-    crossinline enabled: (Set<T>) -> Boolean = { true },
+    noinline enabled: (Set<T>) -> Boolean = { true },
     noinline icon: @Composable ((Set<T>) -> Unit)? = null,
-    noinline summary: @Composable ((Set<T>) -> Unit)? = null,
+    noinline summary: ((Set<T>) -> String?)? = null,
+    staticSummary: String? = null,
     noinline valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     noinline item:
         @Composable
         (value: T, currentValues: Set<T>, onToggle: (Boolean) -> Unit) -> Unit =
         MultiSelectListPreferenceDefaults.item(valueToText),
 ) {
+    SearchIndexer.record(key, title, staticSummary)
     item(key = key, contentType = "MultiSelectListPreference") {
         val state = rememberState()
         val value by state
         MultiSelectListPreference(
             state = state,
             values = values,
-            title = { title(value) },
+            title = title,
             modifier = modifier.then(highlightedKeyModifier(key)),
-            enabled = enabled(value),
-            icon = icon?.let { { it(value) } },
-            summary = summary?.let { { it(value) } },
+            enabled = enabled,
+            icon = icon,
+            summary = summary,
             valueToText = valueToText,
             item = item,
         )
@@ -87,15 +89,17 @@ public fun <T> LazyListScope.multiSelectListPreference(
     value: Set<T>,
     onValueChange: (Set<T>) -> Unit,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValues: Set<T>, onToggle: (Boolean) -> Unit) -> Unit =
         MultiSelectListPreferenceDefaults.item(valueToText),
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "MultiSelectListPreference") {
         MultiSelectListPreference(
             value = value,
@@ -116,11 +120,11 @@ public fun <T> LazyListScope.multiSelectListPreference(
 public fun <T> MultiSelectListPreference(
     state: MutableState<Set<T>>,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    enabled: (Set<T>) -> Boolean = { true },
+    icon: @Composable ((Set<T>) -> Unit)? = null,
+    summary: ((Set<T>) -> String?)? = null,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValues: Set<T>, onToggle: (Boolean) -> Unit) -> Unit =
         MultiSelectListPreferenceDefaults.item(valueToText),
@@ -132,9 +136,9 @@ public fun <T> MultiSelectListPreference(
         values = values,
         title = title,
         modifier = modifier,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
+        enabled = enabled(value),
+        icon = icon?.let { { it(value) } },
+        summary = summary?.invoke(value),
         valueToText = valueToText,
         item = item,
     )
@@ -145,11 +149,11 @@ public fun <T> MultiSelectListPreference(
     value: Set<T>,
     onValueChange: (Set<T>) -> Unit,
     values: List<T>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     valueToText: @Composable (T) -> AnnotatedString = { AnnotatedString(it.toString()) },
     item: @Composable (value: T, currentValues: Set<T>, onToggle: (Boolean) -> Unit) -> Unit =
         MultiSelectListPreferenceDefaults.item(valueToText),
@@ -168,7 +172,7 @@ public fun <T> MultiSelectListPreference(
         var dialogValue by rememberSaveable { mutableStateOf(value) }
         PreferenceAlertDialog(
             onDismissRequest = { openDialog = false },
-            title = title,
+            title = { Text(text = title) },
             buttons = {
                 TextButton(onClick = { openDialog = false }) {
                     Text(text = stringResource(Res.string.cancel))

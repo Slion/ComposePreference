@@ -30,14 +30,16 @@ import androidx.compose.ui.Modifier
 
 public fun LazyListScope.twoTargetPreference(
     key: String,
-    title: @Composable () -> Unit,
+    title: String,
     secondTarget: @Composable () -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth(),
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "TwoTargetPreference") {
         TwoTargetPreference(
             title = title,
@@ -53,12 +55,12 @@ public fun LazyListScope.twoTargetPreference(
 
 @Composable
 public fun TwoTargetPreference(
-    title: @Composable () -> Unit,
+    title: String,
     secondTarget: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Preference(

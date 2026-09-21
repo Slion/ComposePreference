@@ -26,13 +26,15 @@ import androidx.compose.ui.semantics.Role
 public fun LazyListScope.radioButtonPreference(
     key: String,
     selected: Boolean,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
     widgetContainer: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "RadioButtonPreference") {
         RadioButtonPreference(
             selected = selected,
@@ -49,10 +51,10 @@ public fun LazyListScope.radioButtonPreference(
 @Composable
 public fun RadioButtonPreference(
     selected: Boolean,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    summary: @Composable (() -> Unit)? = null,
+    summary: String? = null,
     widgetContainer: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {

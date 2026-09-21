@@ -57,6 +57,10 @@ public sealed class PreferenceCardStyle {
 /**
  * Groups a set of preferences in a Material Design 3 card.
  *
+ * The [content] is built with [PreferenceCardScope], so the card's rows are regular data and
+ * can be indexed for search.
+ *
+ * @param key The unique key of the card.
  * @param modifier Modifier used to draw the card.
  * @param style Style of the card.
  * @param shape Shape of the card. If null, `MaterialTheme.shapes.medium` is used.
@@ -72,10 +76,10 @@ public sealed class PreferenceCardStyle {
  * (preferences already provide their own spacing).
  * @param itemSpacing Vertical gap inserted between the card's top-level items. If 0.dp, no gap
  * is inserted.
- * @param content Content of the card, usually one or more preferences.
+ * @param content Content of the card, built with [PreferenceCardScope].
  */
-@Composable
-public fun PreferenceCard(
+public fun LazyListScope.preferenceCard(
+    key: String? = null,
     modifier: Modifier = Modifier,
     style: PreferenceCardStyle = PreferenceCardStyle.Filled,
     shape: Shape? = null,
@@ -85,62 +89,138 @@ public fun PreferenceCard(
     outerPadding: PaddingValues? = null,
     contentPadding: PaddingValues? = null,
     itemSpacing: Dp = 0.dp,
-    content: @Composable () -> Unit,
+    content: PreferenceCardScope.() -> Unit,
 ) {
-    val cardShape = shape ?: MaterialTheme.shapes.medium
-    val outer = outerPadding ?: PaddingValues(LocalPreferenceTheme.current.horizontalSpacing)
-    val cardPadding = contentPadding ?: PaddingValues(0.dp)
-    Column(modifier = modifier.fillMaxWidth().padding(outer)) {
-        when (style) {
-            PreferenceCardStyle.Filled -> Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = cardShape,
-                colors =
-                    cardColor?.let { CardDefaults.cardColors(containerColor = it) }
-                        ?: CardDefaults.cardColors(),
-            ) {
-                CardContent(cardPadding, itemSpacing, content = content)
-            }
+    // Runs the content (a plain data builder, not composable) before registering the item, so
+    // the card's rows are recorded with the index of the card's single lazy list item.
+    val scope = PreferenceCardScope()
+    scope.content()
+    val cardIndex = SearchIndexer.itemCount()
+    val fixes =
+        scope.rows.mapIndexedNotNull { index, row ->
+            SearchIndexer.record(
+                    key = key ?: "card:${cardIndex}:row:$index",
+                    title = row.title,
+                    summary = row.summary,
+                )
+                ?.let { it to cardIndex }
+        }
+    SearchIndexer.setIndices(fixes.toMap())
+    item(key) {
+        val cardShape = shape ?: MaterialTheme.shapes.medium
+        val outer = outerPadding ?: PaddingValues(LocalPreferenceTheme.current.horizontalSpacing)
+        val cardPadding = contentPadding ?: PaddingValues(0.dp)
+        val cardModifier =
+            modifier.then(if (key != null) highlightedKeyModifier(key) else Modifier)
+        Column(modifier = cardModifier.fillMaxWidth().padding(outer)) {
+            when (style) {
+                PreferenceCardStyle.Filled -> Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = cardShape,
+                    colors =
+                        cardColor?.let { CardDefaults.cardColors(containerColor = it) }
+                            ?: CardDefaults.cardColors(),
+                ) {
+                    CardContent(cardPadding, itemSpacing, rows = scope.rows)
+                }
 
-            PreferenceCardStyle.Elevated -> ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = cardShape,
-                colors =
-                    cardColor?.let { CardDefaults.elevatedCardColors(containerColor = it) }
-                        ?: CardDefaults.elevatedCardColors(),
-                elevation = cardElevation ?: CardDefaults.elevatedCardElevation(),
-            ) {
-                CardContent(cardPadding, itemSpacing, content = content)
-            }
+                PreferenceCardStyle.Elevated -> ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = cardShape,
+                    colors =
+                        cardColor?.let { CardDefaults.elevatedCardColors(containerColor = it) }
+                            ?: CardDefaults.elevatedCardColors(),
+                    elevation = cardElevation ?: CardDefaults.elevatedCardElevation(),
+                ) {
+                    CardContent(cardPadding, itemSpacing, rows = scope.rows)
+                }
 
-            PreferenceCardStyle.Outlined -> OutlinedCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = cardShape,
-                colors =
-                    cardColor?.let { CardDefaults.outlinedCardColors(containerColor = it) }
-                        ?: CardDefaults.outlinedCardColors(),
-                border = cardBorder ?: CardDefaults.outlinedCardBorder(),
-            ) {
-                CardContent(cardPadding, itemSpacing, content = content)
+                PreferenceCardStyle.Outlined -> OutlinedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = cardShape,
+                    colors =
+                        cardColor?.let { CardDefaults.outlinedCardColors(containerColor = it) }
+                            ?: CardDefaults.outlinedCardColors(),
+                    border = cardBorder ?: CardDefaults.outlinedCardBorder(),
+                ) {
+                    CardContent(cardPadding, itemSpacing, rows = scope.rows)
+                }
             }
         }
     }
 }
 
+/** A single row of a [preferenceCard], as built with [PreferenceCardScope.preference]. */
+public data class PreferenceCardRow(
+    public val title: String,
+    public val summary: String?,
+    public val icon: @Composable (() -> Unit)? = null,
+    public val widgetContainer: @Composable (() -> Unit)? = null,
+    public val enabled: Boolean = true,
+    public val onClick: (() -> Unit)? = null,
+)
+
 /**
- * The card content, inserting [itemSpacing] gaps between the top-level items of [content].
+ * Scope for [preferenceCard]. Use [preference] to add a row; the rows are indexed for search
+ * and rendered as regular preference rows.
+ */
+public class PreferenceCardScope {
+    internal val rows = mutableListOf<PreferenceCardRow>()
+
+    /**
+     * Adds a preference row to the card.
+     *
+     * @param title Title of the preference.
+     * @param summary Summary of the preference.
+     * @param icon Icon to draw next to the text.
+     * @param widgetContainer Container to draw at the end of the preference row.
+     * @param enabled Whether the preference is enabled.
+     * @param onClick Callback invoked when the preference is clicked.
+     */
+    public fun preference(
+        title: String,
+        summary: String? = null,
+        icon: @Composable (() -> Unit)? = null,
+        widgetContainer: @Composable (() -> Unit)? = null,
+        enabled: Boolean = true,
+        onClick: (() -> Unit)? = null,
+    ) {
+        rows.add(
+            PreferenceCardRow(
+                title = title,
+                summary = summary,
+                icon = icon,
+                widgetContainer = widgetContainer,
+                enabled = enabled,
+                onClick = onClick,
+            )
+        )
+    }
+}
+
+/**
+ * The card content, inserting [itemSpacing] gaps between the top-level rows of [rows].
  */
 @Composable
 private fun CardContent(
     contentPadding: PaddingValues,
     itemSpacing: Dp,
-    content: @Composable () -> Unit,
+    rows: List<PreferenceCardRow>,
 ) {
     Column(
         modifier = Modifier.padding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(itemSpacing),
     ) {
-        content()
+        for (row in rows) {
+            Preference(
+                title = row.title,
+                summary = row.summary,
+                icon = row.icon,
+                widgetContainer = row.widgetContainer,
+                enabled = row.enabled,
+                onClick = { row.onClick?.invoke() },
+            )
+        }
     }
 }
 
@@ -212,73 +292,6 @@ public fun PreferenceCardGroup(
             ) {
                 item()
             }
-        }
-    }
-}
-
-/**
- * Adds a card of preferences to the lazy list.
- *
- * @param key Key used to identify the card in the lazy list. If null, no key is used.
- * @param modifier Modifier used to draw the card.
- * @param style Style of the card.
- * @param shape Shape of the card. If null, `MaterialTheme.shapes.medium` is used.
- * @param cardColor Card background color. If null, the default container color of [style] is
- * used.
- * @param cardElevation Card elevation. Only applies to [PreferenceCardStyle.Elevated]. If null,
- * [CardDefaults.elevatedCardElevation] is used.
- * @param cardBorder Card border. Only applies to [PreferenceCardStyle.Outlined]. If null,
- * [CardDefaults.outlinedCardBorder] is used.
- * @param outerPadding Clearance between the card and its container. If null,
- * `PreferenceTheme.horizontalSpacing` is used on all sides.
- * @param contentPadding Padding applied around the card content. If null, no padding is applied
- * (preferences already provide their own spacing).
- * @param itemSpacing Vertical gap inserted between the card's top-level items. If 0.dp, no gap
- * is inserted.
- * @param content Content of the card, usually one or more preferences.
- */
-public fun LazyListScope.preferenceCard(
-    key: String? = null,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    style: PreferenceCardStyle = PreferenceCardStyle.Filled,
-    shape: Shape? = null,
-    cardColor: Color? = null,
-    cardElevation: CardElevation? = null,
-    cardBorder: BorderStroke? = null,
-    outerPadding: PaddingValues? = null,
-    contentPadding: PaddingValues? = null,
-    itemSpacing: Dp = 0.dp,
-    content: @Composable () -> Unit,
-) {
-    if (key != null) {
-        item(key = key, contentType = "PreferenceCard") {
-            PreferenceCard(
-                modifier = modifier.then(highlightedKeyModifier(key)),
-                style = style,
-                shape = shape,
-                cardColor = cardColor,
-                cardElevation = cardElevation,
-                cardBorder = cardBorder,
-                outerPadding = outerPadding,
-                contentPadding = contentPadding,
-                itemSpacing = itemSpacing,
-                content = content,
-            )
-        }
-    } else {
-        item(contentType = "PreferenceCard") {
-            PreferenceCard(
-                modifier = modifier,
-                style = style,
-                shape = shape,
-                cardColor = cardColor,
-                cardElevation = cardElevation,
-                cardBorder = cardBorder,
-                outerPadding = outerPadding,
-                contentPadding = contentPadding,
-                itemSpacing = itemSpacing,
-                content = content,
-            )
         }
     }
 }

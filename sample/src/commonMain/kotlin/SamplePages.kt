@@ -29,7 +29,6 @@ import net.slions.compose.preference.ListPreferenceType
 import net.slions.compose.preference.Preference
 import net.slions.compose.preference.PreferenceCardStyle
 import net.slions.compose.preference.PreferencePage
-import net.slions.compose.preference.PreferenceSearchEntry
 import net.slions.compose.preference.checkboxPreference
 import net.slions.compose.preference.footerPreference
 import net.slions.compose.preference.listPreference
@@ -60,82 +59,62 @@ fun samplePages(): List<PreferencePage> {
             id = "basic",
             title = "Basic preferences",
             summary = "Simple, checkbox, switch and two-target rows",
-            searchEntries =
-                listOf(
-                    PreferenceSearchEntry("preference", "Preference", "Summary"),
-                    PreferenceSearchEntry(
-                        "preference_without_icon",
-                        "Preference without icon",
-                        "Summary",
-                    ),
-                    PreferenceSearchEntry("checkbox_preference", "Checkbox preference"),
-                    PreferenceSearchEntry(
-                        "disabled_checkbox_preference",
-                        "Disabled checkbox preference",
-                    ),
-                    PreferenceSearchEntry("switch_preference", "Switch preference"),
-                    PreferenceSearchEntry(
-                        "two_target_switch_preference",
-                        "Two target switch preference",
-                    ),
-                    PreferenceSearchEntry(
-                        "two_target_icon_button_preference",
-                        "Two target icon button preference",
-                    ),
-                    PreferenceSearchEntry("radio_button_preference", "Radio button preference"),
-                ),
             content = {
-                preferenceCategory(key = "basic_category", title = { Text(text = "Basic") })
+                preferenceCategory(key = "basic_category", title = "Basic")
                 preference(
                     key = "preference",
-                    title = { Text(text = "Preference") },
+                    title = "Preference",
                     icon = {
                         Icon(
                             imageVector = Icons.Outlined.Settings,
                             contentDescription = null,
                         )
                     },
-                    summary = { Text(text = "Summary") },
+                    summary = "Summary",
                 ) {}
                 preference(
                     key = "preference_without_icon",
-                    title = { Text(text = "Preference without icon") },
-                    summary = { Text(text = "Summary") },
+                    title = "Preference without icon",
+                    summary = "Summary",
                 ) {}
                 preferenceCategory(
                     key = "checkbox_category",
-                    title = { Text(text = "Checkbox") },
+                    title = "Checkbox",
                 )
                 checkboxPreference(
                     key = "checkbox_preference",
                     defaultValue = false,
-                    title = { Text(text = "Checkbox preference") },
-                    summary = { Text(text = if (it) "On" else "Off") },
+                    title = "Checkbox preference",
+                    summary = { if (it) "On" else "Off" },
+                    staticSummary = "On/Off",
                 )
                 checkboxPreference(
                     key = "disabled_checkbox_preference",
                     defaultValue = true,
-                    title = { Text(text = "Disabled checkbox preference") },
+                    title = "Disabled checkbox preference",
                     enabled = { false },
-                    summary = { Text(text = if (it) "On" else "Off") },
+                    summary = { if (it) "On" else "Off" },
+                    staticSummary = "On/Off",
                 )
-                preferenceCategory(key = "switch_category", title = { Text(text = "Switch") })
+                preferenceCategory(key = "switch_category", title = "Switch")
                 switchPreference(
                     key = "switch_preference",
                     defaultValue = false,
-                    title = { Text(text = "Switch preference") },
-                    summary = { Text(text = if (it) "On" else "Off") },
+                    title = "Switch preference",
+                    summary = { if (it) "On" else "Off" },
+                    staticSummary = "On/Off",
                 )
                 twoTargetSwitchPreference(
                     key = "two_target_switch_preference",
                     defaultValue = false,
-                    title = { Text(text = "Two target switch preference") },
-                    summary = { Text(text = if (it) "On" else "Off") },
+                    title = "Two target switch preference",
+                    summary = { if (it) "On" else "Off" },
+                    staticSummary = "On/Off",
                 ) {}
                 twoTargetIconButtonPreference(
                     key = "two_target_icon_button_preference",
-                    title = { Text(text = "Two target icon button preference") },
-                    summary = { Text(text = "Summary") },
+                    title = "Two target icon button preference",
+                    summary = "Summary",
                     onClick = {},
                     iconButtonIcon = {
                         Icon(imageVector = Icons.Outlined.Settings, contentDescription = "Settings")
@@ -143,13 +122,13 @@ fun samplePages(): List<PreferencePage> {
                 ) {}
                 preferenceCategory(
                     key = "radio_category",
-                    title = { Text(text = "Radio button") },
+                    title = "Radio button",
                 )
                 radioButtonPreference(
                     key = "radio_button_preference",
                     selected = true,
-                    title = { Text(text = "Radio button preference") },
-                    summary = { Text(text = "Summary") },
+                    title = "Radio button preference",
+                    summary = "Summary",
                 ) {}
             },
         ),
@@ -157,76 +136,62 @@ fun samplePages(): List<PreferencePage> {
             id = "advanced",
             title = "Advanced preferences",
             summary = "Slider, list, multi-select and text field rows",
-            searchEntries =
-                listOf(
-                    PreferenceSearchEntry("slider_preference", "Slider preference"),
-                    PreferenceSearchEntry(
-                        "list_alert_dialog_preference",
-                        "List preference (alert dialog)",
-                    ),
-                    PreferenceSearchEntry(
-                        "list_dropdown_menu_preference",
-                        "List preference (dropdown menu)",
-                    ),
-                    PreferenceSearchEntry(
-                        "multi_select_list_preference",
-                        "Multi-select list preference",
-                    ),
-                    PreferenceSearchEntry("text_field_preference", "Text field preference"),
-                    PreferenceSearchEntry(
-                        "footer_preference",
-                        "Footer preference",
-                        "Footer preference summary",
-                    ),
-                ),
             content = {
-                preferenceCategory(key = "slider_category", title = { Text(text = "Slider") })
+                preferenceCategory(key = "slider_category", title = "Slider")
                 sliderPreference(
                     key = "slider_preference",
                     defaultValue = 0f,
-                    title = { Text(text = "Slider preference") },
+                    title = "Slider preference",
                     valueRange = 0f..5f,
                     valueSteps = 9,
-                    summary = { Text(text = "Summary") },
-                    valueText = { Text(text = ((it / 0.5f).roundToInt() * 0.5f).toString()) },
+                    summary = { "Summary" },
+                    staticSummary = "Summary",
+                    valueText = { ((it / 0.5f).roundToInt() * 0.5f).toString() },
                 )
-                preferenceCategory(key = "list_category", title = { Text(text = "List") })
+                preferenceCategory(key = "list_category", title = "List")
                 listPreference(
                     key = "list_alert_dialog_preference",
                     defaultValue = "Alpha",
                     values = listOf("Alpha", "Beta", "Canary"),
-                    title = { Text(text = "List preference (alert dialog)") },
-                    summary = { Text(text = it) },
+                    title = "List preference (alert dialog)",
+                    summary = {
+                        it
+                    },
                 )
                 listPreference(
                     key = "list_dropdown_menu_preference",
                     defaultValue = "Alpha",
                     values = listOf("Alpha", "Beta", "Canary"),
-                    title = { Text(text = "List preference (dropdown menu)") },
-                    summary = { Text(text = it) },
+                    title = "List preference (dropdown menu)",
+                    summary = {
+                        it
+                    },
                     type = ListPreferenceType.DROPDOWN_MENU,
                 )
                 multiSelectListPreference(
                     key = "multi_select_list_preference",
                     defaultValue = setOf("Alpha", "Beta"),
                     values = listOf("Alpha", "Beta", "Canary"),
-                    title = { Text(text = "Multi-select list preference") },
-                    summary = { Text(text = it.sorted().joinToString(", ")) },
+                    title = "Multi-select list preference",
+                    summary = { it.sorted().joinToString(", ") },
                 )
                 preferenceCategory(
                     key = "text_field_category",
-                    title = { Text(text = "Text field") },
+                    title = "Text field",
                 )
                 textFieldPreference(
                     key = "text_field_preference",
                     defaultValue = "Value",
-                    title = { Text(text = "Text field preference") },
+                    title = "Text field preference",
                     textToValue = { it },
-                    summary = { Text(text = it) },
+                    summary = {
+                        it
+                    },
                 )
                 footerPreference(
                     key = "footer_preference",
-                    summary = { Text(text = "Footer preference summary") },
+                    title = "Footer preference",
+                    summary = "Footer preference summary",
                 )
             },
         ),
@@ -234,75 +199,44 @@ fun samplePages(): List<PreferencePage> {
             id = "cards",
             title = "Preference cards",
             summary = "Preference cards in a Material Design 3 card",
-            searchEntries =
-                listOf(
-                    PreferenceSearchEntry(
-                        "card_filled",
-                        "Filled card",
-                        "Default card style and colors",
-                    ),
-                    PreferenceSearchEntry(
-                        "card_filled_color",
-                        "Filled card (custom color)",
-                    ),
-                    PreferenceSearchEntry(
-                        "card_filled_shape",
-                        "Filled card (custom shape)",
-                    ),
-                    PreferenceSearchEntry("card_elevated", "Elevated card"),
-                    PreferenceSearchEntry("card_elevated_custom", "Elevated card (custom color)"),
-                    PreferenceSearchEntry("card_outlined", "Outlined card"),
-                    PreferenceSearchEntry("card_outlined_custom", "Outlined card (custom color)"),
-                    PreferenceSearchEntry(
-                        "card_no_outer_padding",
-                        "No outer padding",
-                    ),
-                    PreferenceSearchEntry(
-                        "card_extra_outer_padding",
-                        "Extra outer padding",
-                    ),
-                    PreferenceSearchEntry("card_extra_padding", "Extra content padding"),
-                    PreferenceSearchEntry("card_individual_items", "Individual items"),
-                    PreferenceSearchEntry("card_item_spacing", "Item spacing"),
-                ),
             content = {
-                preferenceCategory(key = "card_filled_category", title = { Text(text = "Filled") })
+                preferenceCategory(key = "card_filled_category", title = "Filled")
                 preferenceCard(key = "card_filled") {
-                    Preference(
-                        title = { Text(text = "Filled card") },
-                        summary = { Text(text = "Default card style and colors") },
+                    preference(
+                        title = "Filled card",
+                        summary = "Default card style and colors",
                     )
-                    Preference(
-                        title = { Text(text = "Filled card (second item)") },
-                        summary = { Text(text = "Cards can group multiple preferences") },
+                    preference(
+                        title = "Filled card (second item)",
+                        summary = "Cards can group multiple preferences",
                     )
                 }
                 preferenceCard(
                     key = "card_filled_color",
                     cardColor = colorScheme.primaryContainer,
                 ) {
-                    Preference(
-                        title = { Text(text = "Filled card (custom color)") },
-                        summary = { Text(text = "primaryContainer as card color") },
+                    preference(
+                        title = "Filled card (custom color)",
+                        summary = "primaryContainer as card color",
                     )
                 }
                 preferenceCard(
                     key = "card_filled_shape",
                     shape = RoundedCornerShape(24.dp),
                 ) {
-                    Preference(
-                        title = { Text(text = "Filled card (custom shape)") },
-                        summary = { Text(text = "RoundedCornerShape(24.dp)") },
+                    preference(
+                        title = "Filled card (custom shape)",
+                        summary = "RoundedCornerShape(24.dp)",
                     )
                 }
                 preferenceCategory(
                     key = "card_elevated_category",
-                    title = { Text(text = "Elevated") },
+                    title = "Elevated",
                 )
                 preferenceCard(key = "card_elevated", style = PreferenceCardStyle.Elevated) {
-                    Preference(
-                        title = { Text(text = "Elevated card") },
-                        summary = { Text(text = "Default elevation") },
+                    preference(
+                        title = "Elevated card",
+                        summary = "Default elevation",
                     )
                 }
                 preferenceCard(
@@ -310,19 +244,19 @@ fun samplePages(): List<PreferencePage> {
                     style = PreferenceCardStyle.Elevated,
                     cardColor = colorScheme.secondaryContainer,
                 ) {
-                    Preference(
-                        title = { Text(text = "Elevated card (custom color)") },
-                        summary = { Text(text = "secondaryContainer as card color") },
+                    preference(
+                        title = "Elevated card (custom color)",
+                        summary = "secondaryContainer as card color",
                     )
                 }
                 preferenceCategory(
                     key = "card_outlined_category",
-                    title = { Text(text = "Outlined") },
+                    title = "Outlined",
                 )
                 preferenceCard(key = "card_outlined", style = PreferenceCardStyle.Outlined) {
-                    Preference(
-                        title = { Text(text = "Outlined card") },
-                        summary = { Text(text = "Default outline border") },
+                    preference(
+                        title = "Outlined card",
+                        summary = "Default outline border",
                     )
                 }
                 preferenceCard(
@@ -330,77 +264,77 @@ fun samplePages(): List<PreferencePage> {
                     style = PreferenceCardStyle.Outlined,
                     cardColor = colorScheme.surfaceVariant,
                 ) {
-                    Preference(
-                        title = { Text(text = "Outlined card (custom color)") },
-                        summary = { Text(text = "surfaceVariant as card color") },
+                    preference(
+                        title = "Outlined card (custom color)",
+                        summary = "surfaceVariant as card color",
                     )
                 }
                 preferenceCategory(
                     key = "card_padding_category",
-                    title = { Text(text = "Padding") },
+                    title = "Padding",
                 )
                 preferenceCard(
                     key = "card_no_outer_padding",
                     outerPadding = PaddingValues(0.dp),
                 ) {
-                    Preference(
-                        title = { Text(text = "No outer padding") },
-                        summary = { Text(text = "outerPadding = PaddingValues(0.dp)") },
+                    preference(
+                        title = "No outer padding",
+                        summary = "outerPadding = PaddingValues(0.dp)",
                     )
                 }
                 preferenceCard(
                     key = "card_extra_outer_padding",
                     outerPadding = PaddingValues(32.dp),
                 ) {
-                    Preference(
-                        title = { Text(text = "Extra outer padding") },
-                        summary = { Text(text = "outerPadding = PaddingValues(32.dp)") },
+                    preference(
+                        title = "Extra outer padding",
+                        summary = "outerPadding = PaddingValues(32.dp)",
                     )
                 }
                 preferenceCard(key = "card_extra_padding", contentPadding = PaddingValues(32.dp)) {
-                    Preference(
-                        title = { Text(text = "Extra content padding") },
-                        summary = { Text(text = "contentPadding = PaddingValues(32.dp)") },
+                    preference(
+                        title = "Extra content padding",
+                        summary = "contentPadding = PaddingValues(32.dp)",
                     )
                 }
                 preferenceCategory(
                     key = "card_item_style_category",
-                    title = { Text(text = "Item style") },
+                    title = "Item style",
                 )
                 preferenceCardGroup(key = "card_individual_items") {
                     card {
                         Preference(
-                            title = { Text(text = "Individual items") },
-                            summary = { Text(text = "First card has rounded top corners") },
+                            title = "Individual items",
+                            summary = "First card has rounded top corners",
                         )
                     }
                     card {
                         Preference(
-                            title = { Text(text = "Individual items (middle)") },
-                            summary = { Text(text = "Middle cards have square corners") },
+                            title = "Individual items (middle)",
+                            summary = "Middle cards have square corners",
                         )
                     }
                     card {
                         Preference(
-                            title = { Text(text = "Individual items (last)") },
-                            summary = { Text(text = "Last card has rounded bottom corners") },
+                            title = "Individual items (last)",
+                            summary = "Last card has rounded bottom corners",
                         )
                     }
                 }
                 preferenceCard(key = "card_item_spacing", itemSpacing = 4.dp) {
-                    Preference(
-                        title = { Text(text = "Item spacing") },
-                        summary = { Text(text = "itemSpacing = 4.dp") },
+                    preference(
+                        title = "Item spacing",
+                        summary = "itemSpacing = 4.dp",
                     )
-                    Preference(
-                        title = { Text(text = "Item spacing (second)") },
-                        summary = { Text(text = "Gap between items") },
+                    preference(
+                        title = "Item spacing (second)",
+                        summary = "Gap between items",
                     )
                 }
                 preferenceCard {
-                    Preference(
-                        title = { Text(text = "Keyless card") },
-                        summary = { Text(text = "No key needed in the lazy list") },
+                    preference(
+                        title = "Keyless card",
+                        summary = "No key needed in the lazy list",
                     )
                 }
             },

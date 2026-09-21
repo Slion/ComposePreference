@@ -21,9 +21,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -33,11 +38,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
+/**
+ * Adds a slider preference row to the lazy list, whose state is remembered by [key].
+ *
+ * @param key The lazy list key of the row, and the preference state key.
+ * @param defaultValue The initial value of the slider.
+ * @param title The title of the row. Also used as the row's search text.
+ * @param modifier Modifier applied to the row.
+ * @param rememberState How the row's state is remembered.
+ * @param valueRange The range of values the slider can take.
+ * @param valueSteps The number of discrete steps; 0 for continuous.
+ * @param rememberSliderState How the slider's state is remembered.
+ * @param enabled Whether the row is enabled, based on the current value.
+ * @param icon The leading icon, based on the current value.
+ * @param summary The summary text, based on the current value, shown above the slider.
+ * @param staticSummary A static summary used in the [buildSearchIndex] index.
+ * @param valueText The text shown next to the slider, based on the current value.
+ */
 public inline fun LazyListScope.sliderPreference(
     key: String,
     defaultValue: Float,
-    crossinline title: @Composable (Float) -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     crossinline rememberState: @Composable () -> MutableState<Float> = {
         rememberPreferenceState(key, defaultValue)
@@ -47,11 +71,13 @@ public inline fun LazyListScope.sliderPreference(
     crossinline rememberSliderState: @Composable (Float) -> MutableFloatState = {
         remember { mutableFloatStateOf(it) }
     },
-    crossinline enabled: (Float) -> Boolean = { true },
+    noinline enabled: (Float) -> Boolean = { true },
     noinline icon: @Composable ((Float) -> Unit)? = null,
-    noinline summary: @Composable ((Float) -> Unit)? = null,
-    noinline valueText: @Composable ((Float) -> Unit)? = null,
+    noinline summary: ((Float) -> String?)? = null,
+    staticSummary: String? = null,
+    noinline valueText: ((Float) -> String?)? = null,
 ) {
+    SearchIndexer.record(key, title, staticSummary)
     item(key = key, contentType = "SliderPreference") {
         val state = rememberState()
         val value by state
@@ -59,15 +85,15 @@ public inline fun LazyListScope.sliderPreference(
         val sliderValue by sliderState
         SliderPreference(
             state = state,
-            title = { title(sliderValue) },
+            title = title,
             modifier = modifier.then(highlightedKeyModifier(key)),
             valueRange = valueRange,
             valueSteps = valueSteps,
             sliderState = sliderState,
-            enabled = enabled(value),
-            icon = icon?.let { { it(sliderValue) } },
-            summary = summary?.let { { it(sliderValue) } },
-            valueText = valueText?.let { { it(sliderValue) } },
+            enabled = enabled,
+            icon = icon,
+            summary = summary,
+            valueText = valueText,
         )
     }
 }
@@ -78,15 +104,17 @@ public fun LazyListScope.sliderPreference(
     onValueChange: (Float) -> Unit,
     sliderValue: Float,
     onSliderValueChange: (Float) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     valueSteps: Int = 0,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
-    valueText: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    staticSummary: String? = null,
+    valueText: ((Float) -> String?)? = null,
 ) {
+    SearchIndexer.record(key, title, staticSummary ?: summary)
     item(key = key, contentType = "SliderPreference") {
         SliderPreference(
             value = value,
@@ -105,18 +133,21 @@ public fun LazyListScope.sliderPreference(
     }
 }
 
+/**
+ * A slider preference row, whose state is a [MutableState].
+ */
 @Composable
 public fun SliderPreference(
     state: MutableState<Float>,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     valueSteps: Int = 0,
     sliderState: MutableFloatState = remember { mutableFloatStateOf(state.value) },
-    enabled: Boolean = true,
-    icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
-    valueText: @Composable (() -> Unit)? = null,
+    enabled: (Float) -> Boolean = { true },
+    icon: @Composable ((Float) -> Unit)? = null,
+    summary: ((Float) -> String?)? = null,
+    valueText: ((Float) -> String?)? = null,
 ) {
     var value by state
     var sliderValue by sliderState
@@ -129,9 +160,9 @@ public fun SliderPreference(
         modifier = modifier,
         valueRange = valueRange,
         valueSteps = valueSteps,
-        enabled = enabled,
-        icon = icon,
-        summary = summary,
+        enabled = enabled(value),
+        icon = icon?.let { { it(value) } },
+        summary = summary?.invoke(value),
         valueText = valueText,
     )
 }
@@ -142,14 +173,14 @@ public fun SliderPreference(
     onValueChange: (Float) -> Unit,
     sliderValue: Float,
     onSliderValueChange: (Float) -> Unit,
-    title: @Composable () -> Unit,
+    title: String,
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     valueSteps: Int = 0,
     enabled: Boolean = true,
     icon: @Composable (() -> Unit)? = null,
-    summary: @Composable (() -> Unit)? = null,
-    valueText: @Composable (() -> Unit)? = null,
+    summary: String? = null,
+    valueText: ((Float) -> String?)? = null,
 ) {
     var lastValue by remember { mutableFloatStateOf(value) }
     SideEffect {
@@ -158,14 +189,40 @@ public fun SliderPreference(
             lastValue = value
         }
     }
-    Preference(
-        title = title,
-        modifier = modifier,
-        enabled = enabled,
-        icon = icon,
-        summary = {
-            Column {
-                summary?.invoke()
+    val theme = LocalPreferenceTheme.current
+    BasicPreference(
+        textContainer = {
+            Column(
+                modifier =
+                    Modifier.padding(
+                        theme.padding.copy(
+                            start = if (icon != null) 0.dp else Dp.Unspecified,
+                            end = 0.dp,
+                        )
+                    )
+            ) {
+                CompositionLocalProvider(
+                    LocalContentColor provides
+                        theme.titleColor.let {
+                            if (enabled) it else it.copy(alpha = theme.disabledOpacity)
+                        }
+                ) {
+                    ProvideTextStyle(value = theme.titleTextStyle) {
+                        Text(text = title)
+                    }
+                }
+                if (summary != null) {
+                    CompositionLocalProvider(
+                        LocalContentColor provides
+                            theme.summaryColor.let {
+                                if (enabled) it else it.copy(alpha = theme.disabledOpacity)
+                            }
+                    ) {
+                        ProvideTextStyle(value = theme.summaryTextStyle) {
+                            Text(text = summary)
+                        }
+                    }
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     // onValueChangeFinished() may be invoked before a recomposition has
                     // happened for onValueChange(), for example in the clicking case, so make
@@ -183,12 +240,34 @@ public fun SliderPreference(
                         steps = valueSteps,
                         onValueChangeFinished = { onValueChange(latestSliderValue) },
                     )
-                    if (valueText != null) {
-                        val theme = LocalPreferenceTheme.current
-                        Box(modifier = Modifier.padding(start = theme.horizontalSpacing)) {
-                            valueText()
+                    valueText?.let { text ->
+                        val text = text(sliderValue)
+                        if (text != null) {
+                            Box(modifier = Modifier.padding(start = theme.horizontalSpacing)) {
+                                Text(text = text)
+                            }
                         }
                     }
+                }
+            }
+        },
+        modifier = modifier,
+        enabled = enabled,
+        iconContainer = {
+            if (icon != null) {
+                Box(
+                    modifier =
+                        Modifier.widthIn(min = theme.iconContainerMinWidth)
+                            .padding(theme.padding.copy(end = 0.dp)),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    CompositionLocalProvider(
+                        LocalContentColor provides
+                            theme.iconColor.let {
+                                if (enabled) it else it.copy(alpha = theme.disabledOpacity)
+                            },
+                        content = icon,
+                    )
                 }
             }
         },
