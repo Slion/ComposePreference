@@ -22,13 +22,23 @@ import net.slions.compose.preference.PreferencePage
 const val SampleTitle = "ComposePreference Sample"
 
 /**
- * The sample pages: one page per preference type, hosted by
- * [net.slions.compose.preference.PreferencePageScreen].
+ * The sample pages: one page per preference type, each exercising the type's various
+ * configurations. Card groups and categories are used throughout the pages, so they have no
+ * page of their own. Hosted by [net.slions.compose.preference.PreferencePageScreen].
  */
 @Composable
 fun samplePages(): List<PreferencePage> =
     listOf(
-        basicPreferencePage(),
-        advancedPreferencePage(),
-        cardPreferencePage(),
+        preferenceRowPage(),
+        checkboxPreferencePage(),
+        switchPreferencePage(),
+        sliderPreferencePage(),
+        listPreferencePage(),
+        multiSelectListPreferencePage(),
+        textFieldPreferencePage(),
+        radioButtonPreferencePage(),
+        footerPreferencePage(),
+        twoTargetPreferencePage(),
+        twoTargetIconButtonPreferencePage(),
+        twoTargetSwitchPreferencePage(),
     )
